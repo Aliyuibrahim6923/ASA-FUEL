@@ -1,11 +1,12 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 
-export async function PATCH(request: Request, { params }: { params: { id: string } }) {
+export async function PATCH(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const data = await request.json();
+    const resolvedParams = await params;
     const order = await prisma.order.update({
-      where: { id: params.id },
+      where: { id: resolvedParams.id },
       data: { status: data.status }
     });
     return NextResponse.json(order);
