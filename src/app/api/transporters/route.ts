@@ -1,48 +1,48 @@
 import { NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import { createClient } from '@/utils/supabase/server';
 
 export async function GET() {
-  try {
-    const transporters = await prisma.transporter.findMany({
-      include: {
-        trucks: true,
-      },
-    });
-    return NextResponse.json(transporters);
-  } catch (error) {
-    console.error("Failed to fetch transporters:", error);
-    return NextResponse.json({ error: "Failed to fetch transporters" }, { status: 500 });
-  }
+  const supabase = await createClient();
+  const { data: transporters, error } = await supabase
+    .from('Transporter')
+    .select('*, trucks:Truck(*)');
+
+  if (error) return NextResponse.json({ error: "Failed to fetch transporters" }, { status: 500 });
+  return NextResponse.json(transporters || []);
 }
 
 export async function POST(request: Request) {
-  try {
-    const data = await request.json();
-    
-    // In a real scenario, you'd validate 'data' with Zod or similar here.
-    const transporter = await prisma.transporter.create({
-      data: {
-        name: data.name,
-        kycDocuments: data.kycDocuments || "[]", // Defaulting to stringified empty array since schema uses Json
-        isActive: true,
-        trucks: {
-          create: {
-            truckNameId: data.truckNameId,
-            capacityLiters: parseFloat(data.capacityLiters),
-            driverName: data.driverName,
-            driverPhone: data.driverPhone,
-            isActive: true,
-          }
-        }
-      },
-      include: {
-        trucks: true,
-      }
-    });
+  const supabase = await createClient();
+  const data = await request.json();
+  
+  const { data: transporter, error: tError } = await supabase
+    .from('Transporter')
+    .insert([{
+      name: data.name,
+      kycDocuments: data.kycDocuments || []
+    }])
+    .select()
+    .single();
 
-    return NextResponse.json(transporter, { status: 201 });
-  } catch (error) {
-    console.error("Failed to create transporter:", error);
+  if (tError || !transporter) {
+    console.error("Failed to create transporter:", tError);
     return NextResponse.json({ error: "Failed to create transporter" }, { status: 500 });
   }
+
+  const { error: truckError } = await supabase
+    .from('Truck')
+    .insert([{
+      transporterId: transporter.id,
+      truckNameId: data.truckNameId,
+      capacityLiters: parseFloat(data.capacityLiters),
+      driverName: data.driverName,
+      driverPhone: data.driverPhone,
+    }]);
+
+  if (truckError) {
+    console.error("Failed to create truck:", truckError);
+    return NextResponse.json({ error: "Failed to create initial truck" }, { status: 500 });
+  }
+
+  return NextResponse.json(transporter, { status: 201 });
 }

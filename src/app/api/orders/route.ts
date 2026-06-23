@@ -1,34 +1,33 @@
 import { NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import { createClient } from '@/utils/supabase/server';
 
 export async function GET() {
-  try {
-    const orders = await prisma.order.findMany();
-    return NextResponse.json(orders);
-  } catch (error) {
-    console.error("Failed to fetch orders:", error);
-    return NextResponse.json({ error: "Failed to fetch orders" }, { status: 500 });
-  }
+  const supabase = await createClient();
+  const { data: orders, error } = await supabase
+    .from('Order')
+    .select('*');
+
+  if (error) return NextResponse.json({ error: "Failed to fetch orders" }, { status: 500 });
+  return NextResponse.json(orders || []);
 }
 
 export async function POST(request: Request) {
-  try {
-    const data = await request.json();
-    
-    const order = await prisma.order.create({
-      data: {
+  const supabase = await createClient();
+  const data = await request.json();
+  const { data: order, error } = await supabase
+    .from('Order')
+    .insert([{
+        locationId: data.locationId || null,
         petroleumType: data.petroleumType,
         litersOrdered: parseFloat(data.litersOrdered),
         orderCost: parseFloat(data.orderCost),
         loadingCost: parseFloat(data.loadingCost),
         transportCost: parseFloat(data.transportCost),
         status: 'PENDING',
-      }
-    });
+    }])
+    .select()
+    .single();
 
-    return NextResponse.json(order, { status: 201 });
-  } catch (error) {
-    console.error("Failed to create order:", error);
-    return NextResponse.json({ error: "Failed to create order" }, { status: 500 });
-  }
+  if (error) return NextResponse.json({ error: "Failed to create order" }, { status: 500 });
+  return NextResponse.json(order, { status: 201 });
 }
