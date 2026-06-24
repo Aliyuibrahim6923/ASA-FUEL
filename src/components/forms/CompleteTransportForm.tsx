@@ -1,15 +1,23 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function CompleteTransportForm({ transport, onSuccess, onCancel }: { transport: any, onSuccess: () => void, onCancel: () => void }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   
   const [litersDelivered, setLitersDelivered] = useState(transport?.litersCarried || "");
-  const [subsequentLocs, setSubsequentLocs] = useState<{location: string, rate: string, litersDelivered: string}[]>([]);
+  const [subsequentLocs, setSubsequentLocs] = useState<{clientName: string, location: string, rate: string, litersDelivered: string}[]>([]);
+  const [clients, setClients] = useState<any[]>([]);
+
+  useEffect(() => {
+    fetch('/api/clients')
+      .then(res => res.json())
+      .then(data => { if (Array.isArray(data)) setClients(data); })
+      .catch(console.error);
+  }, []);
 
   const handleAddLocation = () => {
-    setSubsequentLocs([...subsequentLocs, { location: "", rate: "", litersDelivered: "" }]);
+    setSubsequentLocs([...subsequentLocs, { clientName: "", location: "", rate: "", litersDelivered: "" }]);
   };
 
   const handleRemoveLocation = (index: number) => {
@@ -29,7 +37,7 @@ export default function CompleteTransportForm({ transport, onSuccess, onCancel }
 
     // Filter out empty locations
     const validLocs = subsequentLocs.filter(loc => loc.location.trim() !== "" && loc.rate !== "" && loc.litersDelivered !== "");
-    const formattedLocs = validLocs.map(loc => ({ location: loc.location, rate: parseFloat(loc.rate), litersDelivered: parseFloat(loc.litersDelivered) }));
+    const formattedLocs = validLocs.map(loc => ({ clientName: loc.clientName, location: loc.location, rate: parseFloat(loc.rate), litersDelivered: parseFloat(loc.litersDelivered) }));
 
     try {
       const response = await fetch(`/api/transports/${transport.id}`, {
@@ -74,14 +82,23 @@ export default function CompleteTransportForm({ transport, onSuccess, onCancel }
         </div>
         
         {subsequentLocs.map((loc, index) => (
-          <div key={index} style={{ display: 'flex', gap: '0.75rem', alignItems: 'center', marginBottom: '0.75rem', backgroundColor: '#f3f4f6', padding: '0.75rem', borderRadius: '0.5rem' }}>
-            <div style={{ flex: 2 }}>
+          <div key={index} style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem', alignItems: 'center', marginBottom: '0.75rem', backgroundColor: '#f3f4f6', padding: '0.75rem', borderRadius: '0.5rem' }}>
+            <div style={{ flex: '1 1 200px' }}>
+                <select className="input" value={loc.clientName} onChange={e => updateLocation(index, 'clientName', e.target.value)} required>
+                  <option value="">Select Client...</option>
+                  {clients.map(c => (
+                    <option key={c.id} value={c.name}>{c.name}</option>
+                  ))}
+                  <option value="Other">Other / Not Listed</option>
+                </select>
+            </div>
+            <div style={{ flex: '1 1 200px' }}>
                 <input type="text" className="input" placeholder="Location Name" value={loc.location} onChange={e => updateLocation(index, 'location', e.target.value)} required />
             </div>
-            <div style={{ flex: 1 }}>
+            <div style={{ flex: '1 1 100px' }}>
                 <input type="number" className="input" placeholder="Fee/Liter" value={loc.rate} onChange={e => updateLocation(index, 'rate', e.target.value)} required />
             </div>
-            <div style={{ flex: 1 }}>
+            <div style={{ flex: '1 1 100px' }}>
                 <input type="number" className="input" placeholder="Liters Delivered" value={loc.litersDelivered} onChange={e => updateLocation(index, 'litersDelivered', e.target.value)} required />
             </div>
             <button type="button" onClick={() => handleRemoveLocation(index)} style={{ color: 'var(--color-danger)', border: 'none', background: 'none', cursor: 'pointer', padding: '0.5rem', fontWeight: 'bold' }}>X</button>
