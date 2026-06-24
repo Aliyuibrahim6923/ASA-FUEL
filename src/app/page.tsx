@@ -20,11 +20,29 @@ export default function Dashboard() {
   
   // Calculate total outstanding receivables across all clients
   let outstandingReceivables = 0;
+  let topDebtor = { name: 'None', amount: 0 };
+  let totalVolumeDelivered = 0;
+
   clients.forEach(client => {
       const totalExpected = client.sales?.reduce((sum: number, s: any) => sum + s.totalExpectedAmount, 0) || 0;
       const totalPaid = client.sales?.reduce((sum: number, s: any) => sum + s.paymentReceived, 0) || 0;
-      outstandingReceivables += (totalExpected - totalPaid);
+      const debt = totalExpected - totalPaid;
+      outstandingReceivables += debt;
+      
+      if (debt > topDebtor.amount) {
+        topDebtor = { name: client.name, amount: debt };
+      }
+
+      client.sales?.forEach((s: any) => {
+        totalVolumeDelivered += (s.litersReceived || 0);
+      });
   });
+
+  const orderFulfillmentRate = orders.length > 0 
+    ? Math.round((orders.filter(o => o.status === 'COMPLETED').length / orders.length) * 100) 
+    : 0;
+
+  const totalDeductions = transports.reduce((sum, t) => sum + (t.totalDeduction || 0), 0);
 
   const todaysInflows = transactions.filter(t => {
       const today = new Date();
@@ -72,7 +90,7 @@ export default function Dashboard() {
         </div>
       </div>
 
-      <div className="grid-cards" style={{ marginBottom: '2rem' }}>
+      <div className="grid-cards" style={{ marginBottom: '1.5rem' }}>
         <div className="card animate-fade-in delay-100">
           <h3 style={{ color: 'var(--color-text-secondary)', fontSize: '0.875rem', marginBottom: '0.5rem' }}>Total Active Orders</h3>
           <p style={{ fontSize: '2rem', fontWeight: 'bold', color: 'var(--color-primary)' }}>{totalActiveOrders}</p>
@@ -88,6 +106,64 @@ export default function Dashboard() {
         <div className="card animate-fade-in delay-400">
           <h3 style={{ color: 'var(--color-text-secondary)', fontSize: '0.875rem', marginBottom: '0.5rem' }}>Today's Inflows</h3>
           <p style={{ fontSize: '2rem', fontWeight: 'bold', color: 'var(--color-success)' }}>₦{todaysInflows.toLocaleString()}</p>
+        </div>
+      </div>
+
+      <div className="grid-cards" style={{ marginBottom: '2rem' }}>
+        <div className="card animate-fade-in delay-200">
+          <h3 style={{ color: 'var(--color-text-secondary)', fontSize: '0.875rem', marginBottom: '0.5rem' }}>Total Volume Delivered</h3>
+          <p style={{ fontSize: '1.75rem', fontWeight: 'bold', color: '#111827' }}>{totalVolumeDelivered.toLocaleString()} <span style={{ fontSize: '1rem', color: '#6b7280' }}>Liters</span></p>
+        </div>
+        <div className="card animate-fade-in delay-300">
+          <h3 style={{ color: 'var(--color-text-secondary)', fontSize: '0.875rem', marginBottom: '0.5rem' }}>Order Fulfillment Rate</h3>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+            <p style={{ fontSize: '1.75rem', fontWeight: 'bold', color: '#111827' }}>{orderFulfillmentRate}%</p>
+            <div style={{ flex: 1, height: '8px', backgroundColor: '#e5e7eb', borderRadius: '4px', overflow: 'hidden' }}>
+              <div style={{ width: `${orderFulfillmentRate}%`, height: '100%', backgroundColor: 'var(--color-success)' }}></div>
+            </div>
+          </div>
+        </div>
+        <div className="card animate-fade-in delay-400">
+          <h3 style={{ color: 'var(--color-text-secondary)', fontSize: '0.875rem', marginBottom: '0.5rem' }}>Total Fleet Deductions</h3>
+          <p style={{ fontSize: '1.75rem', fontWeight: 'bold', color: 'var(--color-warning)' }}>₦{totalDeductions.toLocaleString()}</p>
+        </div>
+      </div>
+
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.5rem', marginBottom: '2rem' }}>
+        <div className="card animate-fade-in delay-200" style={{ display: 'flex', flexDirection: 'column' }}>
+          <h3 style={{ color: 'var(--color-text-secondary)', fontSize: '0.875rem', marginBottom: '1rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Top Debtor</h3>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flex: 1 }}>
+            <div style={{ width: '48px', height: '48px', borderRadius: '50%', backgroundColor: '#fee2e2', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#991b1b', fontWeight: 'bold', fontSize: '1.25rem' }}>
+              {topDebtor.name.charAt(0).toUpperCase()}
+            </div>
+            <div>
+              <p style={{ fontSize: '1.125rem', fontWeight: 600, color: '#111827' }}>{topDebtor.name}</p>
+              <p style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--color-danger)' }}>₦{topDebtor.amount.toLocaleString()}</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="card animate-fade-in delay-300" style={{ display: 'flex', flexDirection: 'column' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+            <h3 style={{ color: 'var(--color-text-secondary)', fontSize: '0.875rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Recent Activity Feed</h3>
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', overflowY: 'auto', maxHeight: '180px', paddingRight: '0.5rem' }}>
+            {transactions.slice(0, 4).map(t => (
+              <div key={t.id} style={{ display: 'flex', gap: '0.75rem', borderBottom: '1px solid var(--color-divider)', paddingBottom: '0.75rem' }}>
+                <div style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: t.type === 'INFLOW' ? 'var(--color-success)' : 'var(--color-danger)', marginTop: '0.35rem' }}></div>
+                <div style={{ flex: 1 }}>
+                  <p style={{ fontSize: '0.875rem', fontWeight: 500, color: '#111827', margin: 0 }}>
+                    {t.type === 'INFLOW' ? 'Payment Received' : 'Expense Recorded'}
+                  </p>
+                  <p style={{ fontSize: '0.75rem', color: '#6b7280', margin: 0, marginTop: '0.125rem' }}>
+                    {t.reference || t.category.replace('_', ' ')} • ₦{t.amount.toLocaleString()}
+                  </p>
+                </div>
+                <span style={{ fontSize: '0.7rem', color: '#9ca3af' }}>{new Date(t.date).toLocaleDateString()}</span>
+              </div>
+            ))}
+            {transactions.length === 0 && <p style={{ fontSize: '0.875rem', color: '#9ca3af', textAlign: 'center', marginTop: '1rem' }}>No recent activity.</p>}
+          </div>
         </div>
       </div>
 
