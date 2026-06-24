@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import Sidebar from "../components/Sidebar";
-import Header from "../components/Header";
+import NavigationLayout from "../components/NavigationLayout";
 
 export const metadata: Metadata = {
   title: "ASA-FUEL Logistics",
@@ -16,15 +15,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <div className="app-container">
-          <Sidebar />
-          <main className="main-content">
-            <Header />
-            <div className="page-content animate-fade-in">
-              {children}
-            </div>
-          </main>
-        </div>
+        <NavigationLayout>
+          {children}
+        </NavigationLayout>
       </body>
     </html>
   );
