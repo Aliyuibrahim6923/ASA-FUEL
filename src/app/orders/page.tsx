@@ -90,7 +90,7 @@ export default function OrderManagement() {
                          <button className="btn btn-outline" style={{ fontSize: '0.75rem', padding: '0.25rem 0.5rem' }} onClick={() => { setSelectedOrder(order); setIsLogRefundModalOpen(true); }}>{order.status === 'CANCELLED' ? 'Refund Log' : 'Record Cash Equivalent Returned'}</button>
                       )}
                       <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
-                        <Link href={`/orders/${order.id}`} className="btn btn-outline" style={{ padding: '0.35rem 0.75rem', fontSize: '0.75rem', borderRadius: '0.375rem', border: '1px solid #e5e7eb', backgroundColor: 'white', color: '#374151', textDecoration: 'none' }}>View Details</Link>
+
                         <button className="btn btn-primary" style={{ padding: '0.35rem 0.75rem', fontSize: '0.75rem', borderRadius: '0.375rem' }} onClick={() => { setSelectedOrder(order); setIsEditModalOpen(true); }}>Edit</button>
                       </div>
                       {order.status === 'CHANGED' && (

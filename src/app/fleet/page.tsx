@@ -76,7 +76,7 @@ export default function FleetManagement() {
                     <td>{truck.driverName || '-'}</td>
                     <td><span className="badge badge-success">Active</span></td>
                     <td style={{ textAlign: 'right' }}>
-                      <Link href={`/fleet/transporter/${transporter.id}`} className="btn btn-outline" style={{ padding: '0.35rem 0.75rem', fontSize: '0.75rem', borderRadius: '0.375rem', border: '1px solid #e5e7eb', backgroundColor: 'white', color: '#374151', textDecoration: 'none' }}>View Details</Link>
+
                     </td>
                   </tr>
                 ))
@@ -152,7 +152,7 @@ export default function FleetManagement() {
                           <button className="btn btn-outline" style={{ padding: '0.35rem 0.75rem', fontSize: '0.75rem', borderRadius: '0.375rem', border: '1px solid #e5e7eb', backgroundColor: 'white', color: '#374151' }} onClick={() => { setSelectedTransport(t); setIsLogDepositModalOpen(true); }}>Log Deposit</button>
                         </div>
                         <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
-                          <Link href={`/fleet/${t.id}`} className="btn btn-outline" style={{ padding: '0.35rem 0.75rem', fontSize: '0.75rem', borderRadius: '0.375rem', border: '1px solid #e5e7eb', backgroundColor: 'white', color: '#374151', textDecoration: 'none' }}>View Details</Link>
+
                           <button className="btn btn-outline" style={{ padding: '0.35rem 0.75rem', fontSize: '0.75rem', borderRadius: '0.375rem', border: '1px solid #e5e7eb', backgroundColor: 'white', color: '#374151' }} onClick={() => { setSelectedTransport(t); setIsEditModalOpen(true); }}>Edit</button>
                         </div>
                       </div>
@@ -216,7 +216,7 @@ export default function FleetManagement() {
                       <td style={{ padding: '1.25rem 1rem', fontWeight: 700, color: '#111827', fontSize: '1.125rem' }}>₦{t.totalDeduction ? t.totalDeduction.toLocaleString() : 0}</td>
                       <td style={{ padding: '1.25rem 2rem', textAlign: 'right' }}>
                         <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
-                          <Link href={`/fleet/${t.id}`} className="btn btn-outline" style={{ padding: '0.35rem 0.75rem', fontSize: '0.75rem', borderRadius: '0.375rem', border: '1px solid #e5e7eb', backgroundColor: 'white', color: '#374151', textDecoration: 'none' }}>View Details</Link>
+
                           <button className="btn btn-outline" style={{ padding: '0.35rem 0.75rem', fontSize: '0.75rem', borderRadius: '0.375rem', border: '1px solid #e5e7eb', backgroundColor: 'white', color: '#374151' }} onClick={() => { setSelectedTransport(t); setIsLogDeductionModalOpen(true); }}>Log Deduction</button>
                         </div>
                       </td>

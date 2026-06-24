@@ -103,7 +103,7 @@ export default function ClientManagement() {
                     </td>
                     <td style={{ padding: '1.25rem 2rem', textAlign: 'right' }}>
                       <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
-                        <Link href={`/clients/${client.id}`} className="btn btn-outline" style={{ padding: '0.35rem 0.75rem', fontSize: '0.75rem', borderRadius: '0.375rem', border: '1px solid #e5e7eb', backgroundColor: 'white', color: '#374151', textDecoration: 'none' }}>View Details</Link>
+
                         <button className="btn btn-primary" style={{ padding: '0.35rem 0.75rem', fontSize: '0.75rem', borderRadius: '0.375rem', background: 'linear-gradient(135deg, var(--color-success), #059669)', border: 'none', color: 'white' }} onClick={() => { setSelectedClient(client); setIsPaymentModalOpen(true); }}>Log Deposit</button>
                       </div>
                     </td>

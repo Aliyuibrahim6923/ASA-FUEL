@@ -86,7 +86,7 @@ export default function FinancialManagement() {
                   <td style={{ padding: '1.25rem 1rem' }}><span className="badge badge-success">{t.paymentPurpose?.replace('_', ' ') || 'Deposit'}</span></td>
                   <td style={{ padding: '1.25rem 1rem', color: '#6b7280' }}>{new Date(t.date).toLocaleDateString()}</td>
                   <td style={{ padding: '1.25rem 2rem', textAlign: 'right' }}>
-                    <Link href={`/financials/${t.id}`} className="btn btn-outline" style={{ padding: '0.35rem 0.75rem', fontSize: '0.75rem', borderRadius: '0.375rem', border: '1px solid #e5e7eb', backgroundColor: 'white', color: '#374151', textDecoration: 'none' }}>View Details</Link>
+
                   </td>
                 </tr>
               ))}
@@ -132,7 +132,7 @@ export default function FinancialManagement() {
                     </div>
                   </td>
                   <td style={{ padding: '1.25rem 2rem', textAlign: 'right' }}>
-                    <Link href={`/financials/${t.id}`} className="btn btn-outline" style={{ padding: '0.35rem 0.75rem', fontSize: '0.75rem', borderRadius: '0.375rem', border: '1px solid #e5e7eb', backgroundColor: 'white', color: '#374151', textDecoration: 'none' }}>View Details</Link>
+
                   </td>
                 </tr>
               ))}
