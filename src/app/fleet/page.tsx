@@ -8,10 +8,14 @@ import ManageDeductionsForm from "@/components/forms/ManageDeductionsForm";
 import CompleteTransportForm from "@/components/forms/CompleteTransportForm";
 import LogDepositForm from "@/components/forms/LogDepositForm";
 import LogDeductionForm from "@/components/forms/LogDeductionForm";
+import EditTransportForm from "@/components/forms/EditTransportForm";
+import ViewRecordModal from "@/components/ViewRecordModal";
 
 export default function FleetManagement() {
   const [isTransporterModalOpen, setIsTransporterModalOpen] = useState(false);
   const [isTransportModalOpen, setIsTransportModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isViewModalOpen, setIsViewModalOpen] = useState(false);
   const [isDeductionModalOpen, setIsDeductionModalOpen] = useState(false);
   const [isCompleteTransportModalOpen, setIsCompleteTransportModalOpen] = useState(false);
   const [isLogDepositModalOpen, setIsLogDepositModalOpen] = useState(false);
@@ -137,11 +141,17 @@ export default function FleetManagement() {
                     </td>
                     <td style={{ padding: '1.25rem 1rem', fontWeight: 700, color: '#111827', fontSize: '1.125rem' }}>₦{t.netTransportFeePaid ? t.netTransportFeePaid.toLocaleString() : ((t.ratePerLiter * t.litersCarried) - (t.totalDeduction || 0)).toLocaleString()}</td>
                     <td style={{ padding: '1.25rem 2rem', textAlign: 'right' }}>
-                      <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
-                        {t.status !== 'COMPLETED' && (
-                          <button className="btn btn-primary" style={{ padding: '0.35rem 0.75rem', fontSize: '0.75rem', borderRadius: '0.375rem', boxShadow: '0 2px 4px rgba(255, 106, 0, 0.15)' }} onClick={() => { setSelectedTransport(t); setIsCompleteTransportModalOpen(true); }}>Complete</button>
-                        )}
-                        <button className="btn btn-outline" style={{ padding: '0.35rem 0.75rem', fontSize: '0.75rem', borderRadius: '0.375rem', border: '1px solid #e5e7eb', backgroundColor: 'white', color: '#374151' }} onClick={() => { setSelectedTransport(t); setIsLogDepositModalOpen(true); }}>Log Deposit</button>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', alignItems: 'flex-end' }}>
+                        <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
+                          {t.status !== 'COMPLETED' && (
+                            <button className="btn btn-primary" style={{ padding: '0.35rem 0.75rem', fontSize: '0.75rem', borderRadius: '0.375rem', boxShadow: '0 2px 4px rgba(255, 106, 0, 0.15)' }} onClick={() => { setSelectedTransport(t); setIsCompleteTransportModalOpen(true); }}>Complete</button>
+                          )}
+                          <button className="btn btn-outline" style={{ padding: '0.35rem 0.75rem', fontSize: '0.75rem', borderRadius: '0.375rem', border: '1px solid #e5e7eb', backgroundColor: 'white', color: '#374151' }} onClick={() => { setSelectedTransport(t); setIsLogDepositModalOpen(true); }}>Log Deposit</button>
+                        </div>
+                        <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
+                          <button className="btn btn-outline" style={{ padding: '0.35rem 0.75rem', fontSize: '0.75rem', borderRadius: '0.375rem', border: '1px solid #e5e7eb', backgroundColor: 'white', color: '#374151' }} onClick={() => { setSelectedTransport(t); setIsViewModalOpen(true); }}>View</button>
+                          <button className="btn btn-outline" style={{ padding: '0.35rem 0.75rem', fontSize: '0.75rem', borderRadius: '0.375rem', border: '1px solid #e5e7eb', backgroundColor: 'white', color: '#374151' }} onClick={() => { setSelectedTransport(t); setIsEditModalOpen(true); }}>Edit</button>
+                        </div>
                       </div>
                     </td>
                   </tr>
@@ -240,6 +250,14 @@ export default function FleetManagement() {
 
       <Modal isOpen={isLogDeductionModalOpen} onClose={() => setIsLogDeductionModalOpen(false)} title="Log Trip Deduction">
         <LogDeductionForm transport={selectedTransport} onSuccess={() => { setIsLogDeductionModalOpen(false); loadData(); }} onCancel={() => setIsLogDeductionModalOpen(false)} />
+      </Modal>
+
+      <Modal isOpen={isEditModalOpen} onClose={() => setIsEditModalOpen(false)} title={`Edit Transport #${selectedTransport?.id?.slice(0,8) || ''}`}>
+        <EditTransportForm transport={selectedTransport} onSuccess={() => { setIsEditModalOpen(false); loadData(); }} onCancel={() => setIsEditModalOpen(false)} />
+      </Modal>
+
+      <Modal isOpen={isViewModalOpen} onClose={() => setIsViewModalOpen(false)} title="Transport Details">
+        <ViewRecordModal record={selectedTransport} title={`Transport Trip #${selectedTransport?.id?.slice(0,8) || ''}`} />
       </Modal>
     </>
   );

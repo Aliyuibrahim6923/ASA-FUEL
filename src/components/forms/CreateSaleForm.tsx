@@ -8,14 +8,12 @@ export default function CreateSaleForm({ onSuccess, onCancel }: { onSuccess: () 
   
   const [clients, setClients] = useState<any[]>([]);
   const [transports, setTransports] = useState<any[]>([]);
+  const [orders, setOrders] = useState<any[]>([]);
 
   useEffect(() => {
     fetch('/api/clients').then(res => res.json()).then(setClients).catch(e => console.error(e));
-    fetch('/api/transports').then(res => res.json()).then(data => {
-        if(Array.isArray(data)) {
-           setTransports(data);
-        }
-    }).catch(e => console.error(e));
+    fetch('/api/transports').then(res => res.json()).then(data => { if(Array.isArray(data)) setTransports(data) });
+    fetch('/api/orders').then(res => res.json()).then(data => { if(Array.isArray(data)) setOrders(data) });
   }, []);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -66,6 +64,16 @@ export default function CreateSaleForm({ onSuccess, onCancel }: { onSuccess: () 
           <option value="">Select Transport Trip</option>
           {transports.map(t => <option key={t.id} value={t.id}>
              Trip #{t.id.slice(0,6)} - {t.truck?.truckNameId} to {t.destination}
+          </option>)}
+        </select>
+      </div>
+
+      <div className="form-group">
+        <label>Linked Procurement Order</label>
+        <select name="orderId" className="input" style={{ backgroundColor: 'white' }}>
+          <option value="">Select Associated Order (Optional)</option>
+          {orders.map(o => <option key={o.id} value={o.id}>
+             Order #{o.id.slice(0,6)} - {o.petroleumType} ({o.litersOrdered}L)
           </option>)}
         </select>
       </div>

@@ -21,6 +21,7 @@ export async function POST(request: Request) {
       clientId: data.clientId,
       truckId: data.truckId,
       transportId: data.transportId,
+      orderId: data.orderId || null,
       litersDespatched: parseFloat(data.litersDespatched),
       litersReceived: parseFloat(data.litersReceived),
       amountPerLiter: parseFloat(data.amountPerLiter),

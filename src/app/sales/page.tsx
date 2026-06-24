@@ -4,11 +4,15 @@ import { useState, useEffect } from "react";
 import Modal from "@/components/Modal";
 import CreateClientForm from "@/components/forms/CreateClientForm";
 import CreateSaleForm from "@/components/forms/CreateSaleForm";
+import EditSaleForm from "@/components/forms/EditSaleForm";
+import ViewRecordModal from "@/components/ViewRecordModal";
 import LogLitersReceivedForm from "@/components/forms/LogLitersReceivedForm";
 
 export default function SalesManagement() {
   const [isClientModalOpen, setIsClientModalOpen] = useState(false);
-  const [isSaleModalOpen, setIsSaleModalOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isViewModalOpen, setIsViewModalOpen] = useState(false);
   const [isLogLitersModalOpen, setIsLogLitersModalOpen] = useState(false);
   const [selectedSale, setSelectedSale] = useState<any>(null);
   const [clients, setClients] = useState<any[]>([]);
@@ -16,6 +20,10 @@ export default function SalesManagement() {
 
   const loadData = () => {
     fetch('/api/clients').then(res => res.json()).then(data => { if(Array.isArray(data)) setClients(data) }).catch(e => console.error(e));
+    loadSales();
+  };
+
+  const loadSales = () => {
     fetch('/api/sales').then(res => res.json()).then(data => { if(Array.isArray(data)) setSales(data) }).catch(e => console.error(e));
   };
 
@@ -34,7 +42,7 @@ export default function SalesManagement() {
             <button className="btn btn-outline" onClick={() => setIsClientModalOpen(true)}>
             + Add Client
             </button>
-            <button className="btn btn-primary" onClick={() => setIsSaleModalOpen(true)}>
+            <button className="btn btn-primary" onClick={() => setIsModalOpen(true)}>
             + Record Sale
             </button>
         </div>
@@ -178,12 +186,15 @@ export default function SalesManagement() {
                   <td style={{ padding: '1.25rem 1rem', color: '#4b5563' }}>₦{sale.amountPerLiter}</td>
                   <td style={{ padding: '1.25rem 1rem', fontWeight: 700, color: '#111827', fontSize: '1.125rem' }}>₦{sale.totalExpectedAmount.toLocaleString()}</td>
                   <td style={{ padding: '1.25rem 2rem', textAlign: 'right' }}>
-                     {!sale.litersReceived && (
-                       <button className="btn btn-primary" style={{ padding: '0.35rem 0.75rem', fontSize: '0.75rem', borderRadius: '0.375rem', boxShadow: '0 2px 4px rgba(59, 130, 246, 0.15)', background: 'linear-gradient(135deg, var(--color-info), #2563EB)', color: 'white', border: 'none' }} onClick={() => { setSelectedSale(sale); setIsLogLitersModalOpen(true); }}>Log Delivery</button>
-                     )}
-                     {sale.litersReceived > 0 && (
-                       <button className="btn btn-outline" style={{ padding: '0.35rem 0.75rem', fontSize: '0.75rem', borderRadius: '0.375rem', border: '1px solid #e5e7eb', backgroundColor: 'white', color: '#374151' }}>View Record</button>
-                     )}
+                     <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', alignItems: 'flex-end' }}>
+                       {!sale.litersReceived && (
+                         <button className="btn btn-primary" style={{ padding: '0.35rem 0.75rem', fontSize: '0.75rem', borderRadius: '0.375rem', boxShadow: '0 2px 4px rgba(59, 130, 246, 0.15)', background: 'linear-gradient(135deg, var(--color-info), #2563EB)', color: 'white', border: 'none' }} onClick={() => { setSelectedSale(sale); setIsLogLitersModalOpen(true); }}>Log Delivery</button>
+                       )}
+                       <div style={{ display: 'flex', gap: '0.5rem' }}>
+                         <button className="btn btn-outline" style={{ padding: '0.35rem 0.75rem', fontSize: '0.75rem', borderRadius: '0.375rem', border: '1px solid #e5e7eb', backgroundColor: 'white', color: '#374151' }} onClick={() => { setSelectedSale(sale); setIsViewModalOpen(true); }}>View</button>
+                         <button className="btn btn-outline" style={{ padding: '0.35rem 0.75rem', fontSize: '0.75rem', borderRadius: '0.375rem', border: '1px solid #e5e7eb', backgroundColor: 'white', color: '#374151' }} onClick={() => { setSelectedSale(sale); setIsEditModalOpen(true); }}>Edit</button>
+                       </div>
+                     </div>
                   </td>
                 </tr>
               ))}
@@ -201,12 +212,20 @@ export default function SalesManagement() {
         <CreateClientForm onSuccess={() => { setIsClientModalOpen(false); loadData(); }} onCancel={() => setIsClientModalOpen(false)} />
       </Modal>
 
-      <Modal isOpen={isSaleModalOpen} onClose={() => setIsSaleModalOpen(false)} title="Record Sale Delivery">
-        <CreateSaleForm onSuccess={() => { setIsSaleModalOpen(false); loadData(); }} onCancel={() => setIsSaleModalOpen(false)} />
+      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title="Record Sale Delivery">
+        <CreateSaleForm onSuccess={() => { setIsModalOpen(false); loadSales(); }} onCancel={() => setIsModalOpen(false)} />
       </Modal>
 
-      <Modal isOpen={isLogLitersModalOpen} onClose={() => setIsLogLitersModalOpen(false)} title="Log Received Delivery">
-        <LogLitersReceivedForm sale={selectedSale} onSuccess={() => { setIsLogLitersModalOpen(false); loadData(); }} onCancel={() => setIsLogLitersModalOpen(false)} />
+      <Modal isOpen={isEditModalOpen} onClose={() => setIsEditModalOpen(false)} title={`Edit Sale #${selectedSale?.id?.slice(0,8) || ''}`}>
+        <EditSaleForm sale={selectedSale} onSuccess={() => { setIsEditModalOpen(false); loadSales(); }} onCancel={() => setIsEditModalOpen(false)} />
+      </Modal>
+
+      <Modal isOpen={isViewModalOpen} onClose={() => setIsViewModalOpen(false)} title="Sale Details">
+        <ViewRecordModal record={selectedSale} title={`Sale #${selectedSale?.id?.slice(0,8) || ''}`} />
+      </Modal>
+
+      <Modal isOpen={isLogLitersModalOpen} onClose={() => setIsLogLitersModalOpen(false)} title="Log Liters Received">
+        <LogLitersReceivedForm sale={selectedSale} onSuccess={() => { setIsLogLitersModalOpen(false); loadSales(); }} onCancel={() => setIsLogLitersModalOpen(false)} />
       </Modal>
     </>
   );

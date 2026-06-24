@@ -3,22 +3,26 @@
 import { useState, useEffect } from "react";
 import Modal from "@/components/Modal";
 import CreateOrderForm from "@/components/forms/CreateOrderForm";
+import EditOrderForm from "@/components/forms/EditOrderForm";
+import ViewRecordModal from "@/components/ViewRecordModal";
 import ChangeOrderForm from "@/components/forms/ChangeOrderForm";
 import LogRefundForm from "@/components/forms/LogRefundForm";
 
 export default function OrderManagement() {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isViewModalOpen, setIsViewModalOpen] = useState(false);
   const [isChangeOrderModalOpen, setIsChangeOrderModalOpen] = useState(false);
   const [isLogRefundModalOpen, setIsLogRefundModalOpen] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState<any>(null);
   const [orders, setOrders] = useState<any[]>([]);
 
-  const loadData = () => {
+  const loadOrders = () => {
     fetch('/api/orders').then(res => res.json()).then(data => { if(Array.isArray(data)) setOrders(data) }).catch(e => console.error(e));
   };
 
   useEffect(() => {
-    loadData();
+    loadOrders();
   }, []);
 
   const updateStatus = async (id: string, status: string) => {
@@ -28,7 +32,7 @@ export default function OrderManagement() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status })
       });
-      loadData();
+      loadOrders();
     } catch(e) {
       console.error(e);
     }
@@ -86,6 +90,10 @@ export default function OrderManagement() {
                       {(order.status === 'CANCELLED' || order.status === 'CHANGED') && (
                          <button className="btn btn-outline" style={{ fontSize: '0.75rem', padding: '0.25rem 0.5rem' }} onClick={() => { setSelectedOrder(order); setIsLogRefundModalOpen(true); }}>{order.status === 'CANCELLED' ? 'Refund Log' : 'Record Cash Equivalent Returned'}</button>
                       )}
+                      <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
+                        <button className="btn btn-outline" style={{ padding: '0.35rem 0.75rem', fontSize: '0.75rem', borderRadius: '0.375rem', border: '1px solid #e5e7eb', backgroundColor: 'white', color: '#374151' }} onClick={() => { setSelectedOrder(order); setIsViewModalOpen(true); }}>View</button>
+                        <button className="btn btn-primary" style={{ padding: '0.35rem 0.75rem', fontSize: '0.75rem', borderRadius: '0.375rem' }} onClick={() => { setSelectedOrder(order); setIsEditModalOpen(true); }}>Edit</button>
+                      </div>
                       {order.status === 'CHANGED' && (
                         <button className="btn btn-outline" style={{ fontSize: '0.75rem', padding: '0.25rem 0.5rem' }}>View Swap</button>
                       )}
@@ -117,12 +125,20 @@ export default function OrderManagement() {
         </div>
       </div>
 
-      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title="Create New Order">
-        <CreateOrderForm onSuccess={() => { setIsModalOpen(false); loadData(); }} onCancel={() => setIsModalOpen(false)} />
+      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title="Procure New Order">
+        <CreateOrderForm onSuccess={() => { setIsModalOpen(false); loadOrders(); }} onCancel={() => setIsModalOpen(false)} />
+      </Modal>
+
+      <Modal isOpen={isEditModalOpen} onClose={() => setIsEditModalOpen(false)} title={`Edit Order #${selectedOrder?.id?.slice(0,8) || ''}`}>
+        <EditOrderForm order={selectedOrder} onSuccess={() => { setIsEditModalOpen(false); loadOrders(); }} onCancel={() => setIsEditModalOpen(false)} />
+      </Modal>
+
+      <Modal isOpen={isViewModalOpen} onClose={() => setIsViewModalOpen(false)} title="Order Details">
+        <ViewRecordModal record={selectedOrder} title={`Order #${selectedOrder?.id?.slice(0,8) || ''}`} />
       </Modal>
 
       <Modal isOpen={isChangeOrderModalOpen} onClose={() => setIsChangeOrderModalOpen(false)} title="Change Order (Switch Fuel)">
-        <ChangeOrderForm order={selectedOrder} onSuccess={() => { setIsChangeOrderModalOpen(false); loadData(); }} onCancel={() => setIsChangeOrderModalOpen(false)} />
+        <ChangeOrderForm order={selectedOrder} onSuccess={() => { setIsChangeOrderModalOpen(false); loadOrders(); }} onCancel={() => setIsChangeOrderModalOpen(false)} />
       </Modal>
 
       <Modal isOpen={isLogRefundModalOpen} onClose={() => setIsLogRefundModalOpen(false)} title="Record Cash Equivalent Returned">
