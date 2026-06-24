@@ -4,14 +4,13 @@ import { useState, useEffect } from "react";
 import Modal from "@/components/Modal";
 import CreateOrderForm from "@/components/forms/CreateOrderForm";
 import EditOrderForm from "@/components/forms/EditOrderForm";
-import ViewRecordModal from "@/components/ViewRecordModal";
 import ChangeOrderForm from "@/components/forms/ChangeOrderForm";
 import LogRefundForm from "@/components/forms/LogRefundForm";
+import Link from "next/link";
 
 export default function OrderManagement() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [isViewModalOpen, setIsViewModalOpen] = useState(false);
   const [isChangeOrderModalOpen, setIsChangeOrderModalOpen] = useState(false);
   const [isLogRefundModalOpen, setIsLogRefundModalOpen] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState<any>(null);
@@ -91,7 +90,7 @@ export default function OrderManagement() {
                          <button className="btn btn-outline" style={{ fontSize: '0.75rem', padding: '0.25rem 0.5rem' }} onClick={() => { setSelectedOrder(order); setIsLogRefundModalOpen(true); }}>{order.status === 'CANCELLED' ? 'Refund Log' : 'Record Cash Equivalent Returned'}</button>
                       )}
                       <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
-                        <button className="btn btn-outline" style={{ padding: '0.35rem 0.75rem', fontSize: '0.75rem', borderRadius: '0.375rem', border: '1px solid #e5e7eb', backgroundColor: 'white', color: '#374151' }} onClick={() => { setSelectedOrder(order); setIsViewModalOpen(true); }}>View Details</button>
+                        <Link href={`/orders/${order.id}`} className="btn btn-outline" style={{ padding: '0.35rem 0.75rem', fontSize: '0.75rem', borderRadius: '0.375rem', border: '1px solid #e5e7eb', backgroundColor: 'white', color: '#374151', textDecoration: 'none' }}>View Details</Link>
                         <button className="btn btn-primary" style={{ padding: '0.35rem 0.75rem', fontSize: '0.75rem', borderRadius: '0.375rem' }} onClick={() => { setSelectedOrder(order); setIsEditModalOpen(true); }}>Edit</button>
                       </div>
                       {order.status === 'CHANGED' && (
@@ -128,10 +127,6 @@ export default function OrderManagement() {
 
       <Modal isOpen={isEditModalOpen} onClose={() => setIsEditModalOpen(false)} title={`Edit Order #${selectedOrder?.id?.slice(0,8) || ''}`}>
         <EditOrderForm order={selectedOrder} onSuccess={() => { setIsEditModalOpen(false); loadOrders(); }} onCancel={() => setIsEditModalOpen(false)} />
-      </Modal>
-
-      <Modal isOpen={isViewModalOpen} onClose={() => setIsViewModalOpen(false)} title="Order Details">
-        <ViewRecordModal record={selectedOrder} title={`Order #${selectedOrder?.id?.slice(0,8) || ''}`} />
       </Modal>
 
       <Modal isOpen={isChangeOrderModalOpen} onClose={() => setIsChangeOrderModalOpen(false)} title="Change Order (Switch Fuel)">

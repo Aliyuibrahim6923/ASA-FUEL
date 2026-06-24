@@ -1,6 +1,6 @@
 "use client";
 
-export default function ViewRecordModal({ record, title }: { record: any, title: string }) {
+export default function RecordDetailsView({ record }: { record: any }) {
   if (!record) return null;
 
   // Recursively render nested objects
@@ -43,27 +43,22 @@ export default function ViewRecordModal({ record, title }: { record: any, title:
   };
 
   return (
-    <div style={{ maxHeight: '60vh', overflowY: 'auto', paddingRight: '0.5rem' }}>
-       <h3 style={{ fontSize: '1.125rem', marginBottom: '1rem', color: '#111827', borderBottom: '1px solid #e5e7eb', paddingBottom: '0.5rem' }}>
-         {title}
-       </h3>
-       <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-         {Object.entries(record).map(([key, value]) => {
-           // Skip internal fields usually
-           if (['createdAt', 'updatedAt', 'deletedAt'].includes(key)) return null;
-           
-           return (
-             <div key={key} style={{ padding: '0.75rem', backgroundColor: '#f9fafb', borderRadius: '0.5rem' }}>
-               <p style={{ margin: 0, fontSize: '0.75rem', fontWeight: 600, color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                 {key.replace(/([A-Z])/g, ' $1').trim()}
-               </p>
-               <div style={{ marginTop: '0.25rem', color: '#111827' }}>
-                 {renderValue(value)}
-               </div>
-             </div>
-           );
-         })}
-       </div>
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {Object.entries(record).map(([key, value]) => {
+        // Skip internal fields usually
+        if (['createdAt', 'updatedAt', 'deletedAt'].includes(key)) return null;
+        
+        return (
+          <div key={key} className="p-5 bg-white shadow-sm border border-gray-100 rounded-xl hover:shadow-md transition-shadow">
+            <p className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">
+              {key.replace(/([A-Z])/g, ' $1').trim()}
+            </p>
+            <div className="text-gray-900 text-lg">
+              {renderValue(value)}
+            </div>
+          </div>
+        );
+      })}
     </div>
   );
 }

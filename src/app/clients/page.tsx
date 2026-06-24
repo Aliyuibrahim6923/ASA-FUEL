@@ -3,12 +3,11 @@
 import { useState, useEffect } from "react";
 import Modal from "@/components/Modal";
 import CreateClientForm from "@/components/forms/CreateClientForm";
-import ViewRecordModal from "@/components/ViewRecordModal";
 import LogPaymentForm from "@/components/forms/LogPaymentForm";
+import Link from "next/link";
 
 export default function ClientManagement() {
   const [isClientModalOpen, setIsClientModalOpen] = useState(false);
-  const [isViewModalOpen, setIsViewModalOpen] = useState(false);
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
   const [selectedClient, setSelectedClient] = useState<any>(null);
   const [clients, setClients] = useState<any[]>([]);
@@ -104,7 +103,7 @@ export default function ClientManagement() {
                     </td>
                     <td style={{ padding: '1.25rem 2rem', textAlign: 'right' }}>
                       <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
-                        <button className="btn btn-outline" style={{ padding: '0.35rem 0.75rem', fontSize: '0.75rem', borderRadius: '0.375rem', border: '1px solid #e5e7eb', backgroundColor: 'white', color: '#374151' }} onClick={() => { setSelectedClient(client); setIsViewModalOpen(true); }}>View Details</button>
+                        <Link href={`/clients/${client.id}`} className="btn btn-outline" style={{ padding: '0.35rem 0.75rem', fontSize: '0.75rem', borderRadius: '0.375rem', border: '1px solid #e5e7eb', backgroundColor: 'white', color: '#374151', textDecoration: 'none' }}>View Details</Link>
                         <button className="btn btn-primary" style={{ padding: '0.35rem 0.75rem', fontSize: '0.75rem', borderRadius: '0.375rem', background: 'linear-gradient(135deg, var(--color-success), #059669)', border: 'none', color: 'white' }} onClick={() => { setSelectedClient(client); setIsPaymentModalOpen(true); }}>Log Deposit</button>
                       </div>
                     </td>
@@ -123,10 +122,6 @@ export default function ClientManagement() {
 
       <Modal isOpen={isClientModalOpen} onClose={() => setIsClientModalOpen(false)} title="Add New Client">
         <CreateClientForm onSuccess={() => { setIsClientModalOpen(false); loadClients(); }} onCancel={() => setIsClientModalOpen(false)} />
-      </Modal>
-
-      <Modal isOpen={isViewModalOpen} onClose={() => setIsViewModalOpen(false)} title="Client Details">
-        <ViewRecordModal record={selectedClient} title={selectedClient?.name || ''} />
       </Modal>
 
       <Modal isOpen={isPaymentModalOpen} onClose={() => setIsPaymentModalOpen(false)} title={`Log Deposit for ${selectedClient?.name || 'Client'}`}>

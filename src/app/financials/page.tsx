@@ -4,13 +4,11 @@ import { useState, useEffect } from "react";
 import Modal from "@/components/Modal";
 import LogPaymentForm from "@/components/forms/LogPaymentForm";
 import RecordExpenseForm from "@/components/forms/RecordExpenseForm";
-import ViewRecordModal from "@/components/ViewRecordModal";
+import Link from "next/link";
 
 export default function FinancialManagement() {
   const [isInflowModalOpen, setIsInflowModalOpen] = useState(false);
   const [isOutflowModalOpen, setIsOutflowModalOpen] = useState(false);
-  const [isViewModalOpen, setIsViewModalOpen] = useState(false);
-  const [selectedRecord, setSelectedRecord] = useState<any>(null);
   
   const [transactions, setTransactions] = useState<any[]>([]);
 
@@ -88,7 +86,7 @@ export default function FinancialManagement() {
                   <td style={{ padding: '1.25rem 1rem' }}><span className="badge badge-success">{t.paymentPurpose?.replace('_', ' ') || 'Deposit'}</span></td>
                   <td style={{ padding: '1.25rem 1rem', color: '#6b7280' }}>{new Date(t.date).toLocaleDateString()}</td>
                   <td style={{ padding: '1.25rem 2rem', textAlign: 'right' }}>
-                    <button className="btn btn-outline" style={{ padding: '0.35rem 0.75rem', fontSize: '0.75rem', borderRadius: '0.375rem', border: '1px solid #e5e7eb', backgroundColor: 'white', color: '#374151' }} onClick={() => { setSelectedRecord(t); setIsViewModalOpen(true); }}>View Details</button>
+                    <Link href={`/financials/${t.id}`} className="btn btn-outline" style={{ padding: '0.35rem 0.75rem', fontSize: '0.75rem', borderRadius: '0.375rem', border: '1px solid #e5e7eb', backgroundColor: 'white', color: '#374151', textDecoration: 'none' }}>View Details</Link>
                   </td>
                 </tr>
               ))}
@@ -134,7 +132,7 @@ export default function FinancialManagement() {
                     </div>
                   </td>
                   <td style={{ padding: '1.25rem 2rem', textAlign: 'right' }}>
-                    <button className="btn btn-outline" style={{ padding: '0.35rem 0.75rem', fontSize: '0.75rem', borderRadius: '0.375rem', border: '1px solid #e5e7eb', backgroundColor: 'white', color: '#374151' }} onClick={() => { setSelectedRecord(t); setIsViewModalOpen(true); }}>View Details</button>
+                    <Link href={`/financials/${t.id}`} className="btn btn-outline" style={{ padding: '0.35rem 0.75rem', fontSize: '0.75rem', borderRadius: '0.375rem', border: '1px solid #e5e7eb', backgroundColor: 'white', color: '#374151', textDecoration: 'none' }}>View Details</Link>
                   </td>
                 </tr>
               ))}
@@ -154,10 +152,6 @@ export default function FinancialManagement() {
 
       <Modal isOpen={isOutflowModalOpen} onClose={() => setIsOutflowModalOpen(false)} title="Record Expense (Outflow)">
         <RecordExpenseForm onSuccess={() => { setIsOutflowModalOpen(false); loadData(); }} onCancel={() => setIsOutflowModalOpen(false)} />
-      </Modal>
-
-      <Modal isOpen={isViewModalOpen} onClose={() => setIsViewModalOpen(false)} title="Transaction Details">
-        <ViewRecordModal record={selectedRecord} title={`Transaction #${selectedRecord?.id?.slice(0,8) || ''}`} />
       </Modal>
     </>
   );

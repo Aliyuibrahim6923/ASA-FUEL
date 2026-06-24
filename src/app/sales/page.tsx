@@ -5,14 +5,13 @@ import Modal from "@/components/Modal";
 import CreateClientForm from "@/components/forms/CreateClientForm";
 import CreateSaleForm from "@/components/forms/CreateSaleForm";
 import EditSaleForm from "@/components/forms/EditSaleForm";
-import ViewRecordModal from "@/components/ViewRecordModal";
 import LogLitersReceivedForm from "@/components/forms/LogLitersReceivedForm";
+import Link from "next/link";
 
 export default function SalesManagement() {
   const [isClientModalOpen, setIsClientModalOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [isViewModalOpen, setIsViewModalOpen] = useState(false);
   const [isLogLitersModalOpen, setIsLogLitersModalOpen] = useState(false);
   const [selectedSale, setSelectedSale] = useState<any>(null);
   const [clients, setClients] = useState<any[]>([]);
@@ -107,7 +106,7 @@ export default function SalesManagement() {
                          <button className="btn btn-primary" style={{ padding: '0.35rem 0.75rem', fontSize: '0.75rem', borderRadius: '0.375rem', boxShadow: '0 2px 4px rgba(59, 130, 246, 0.15)', background: 'linear-gradient(135deg, var(--color-info), #2563EB)', color: 'white', border: 'none' }} onClick={() => { setSelectedSale(sale); setIsLogLitersModalOpen(true); }}>Log Delivery</button>
                        )}
                        <div style={{ display: 'flex', gap: '0.5rem' }}>
-                         <button className="btn btn-outline" style={{ padding: '0.35rem 0.75rem', fontSize: '0.75rem', borderRadius: '0.375rem', border: '1px solid #e5e7eb', backgroundColor: 'white', color: '#374151' }} onClick={() => { setSelectedSale(sale); setIsViewModalOpen(true); }}>View Details</button>
+                         <Link href={`/sales/${sale.id}`} className="btn btn-outline" style={{ padding: '0.35rem 0.75rem', fontSize: '0.75rem', borderRadius: '0.375rem', border: '1px solid #e5e7eb', backgroundColor: 'white', color: '#374151', textDecoration: 'none' }}>View Details</Link>
                          <button className="btn btn-outline" style={{ padding: '0.35rem 0.75rem', fontSize: '0.75rem', borderRadius: '0.375rem', border: '1px solid #e5e7eb', backgroundColor: 'white', color: '#374151' }} onClick={() => { setSelectedSale(sale); setIsEditModalOpen(true); }}>Edit</button>
                        </div>
                      </div>
@@ -131,10 +130,6 @@ export default function SalesManagement() {
 
       <Modal isOpen={isEditModalOpen} onClose={() => setIsEditModalOpen(false)} title={`Edit Sale #${selectedSale?.id?.slice(0,8) || ''}`}>
         <EditSaleForm sale={selectedSale} onSuccess={() => { setIsEditModalOpen(false); loadSales(); }} onCancel={() => setIsEditModalOpen(false)} />
-      </Modal>
-
-      <Modal isOpen={isViewModalOpen} onClose={() => setIsViewModalOpen(false)} title="Sale Details">
-        <ViewRecordModal record={selectedSale} title={`Sale #${selectedSale?.id?.slice(0,8) || ''}`} />
       </Modal>
 
       <Modal isOpen={isLogLitersModalOpen} onClose={() => setIsLogLitersModalOpen(false)} title="Log Liters Received">
