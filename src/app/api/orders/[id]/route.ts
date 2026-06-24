@@ -6,9 +6,14 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
   const resolvedParams = await params;
   const data = await request.json();
   
+  const payload: any = {};
+  if (data.status) payload.status = data.status;
+  if (data.petroleumType) payload.petroleumType = data.petroleumType;
+  if (data.cashEquivalentReturned !== undefined) payload.cashEquivalentReturned = parseFloat(data.cashEquivalentReturned);
+
   const { data: order, error } = await supabase
     .from('Order')
-    .update({ status: data.status })
+    .update(payload)
     .eq('id', resolvedParams.id)
     .select()
     .single();

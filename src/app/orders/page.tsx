@@ -3,9 +3,14 @@
 import { useState, useEffect } from "react";
 import Modal from "@/components/Modal";
 import CreateOrderForm from "@/components/forms/CreateOrderForm";
+import ChangeOrderForm from "@/components/forms/ChangeOrderForm";
+import LogRefundForm from "@/components/forms/LogRefundForm";
 
 export default function OrderManagement() {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isChangeOrderModalOpen, setIsChangeOrderModalOpen] = useState(false);
+  const [isLogRefundModalOpen, setIsLogRefundModalOpen] = useState(false);
+  const [selectedOrder, setSelectedOrder] = useState<any>(null);
   const [orders, setOrders] = useState<any[]>([]);
 
   const loadData = () => {
@@ -50,6 +55,7 @@ export default function OrderManagement() {
                 <th>Order ID</th>
                 <th>Petroleum Type</th>
                 <th>Volume</th>
+                <th>Source</th>
                 <th>Total Cost</th>
                 <th>Status</th>
                 <th>Action</th>
@@ -61,21 +67,29 @@ export default function OrderManagement() {
                   <td>{order.id.slice(0, 8)}</td>
                   <td>{order.petroleumType}</td>
                   <td>{order.litersOrdered.toLocaleString()}L</td>
+                  <td>{order.sourceDepot}</td>
                   <td>₦{(order.orderCost + order.loadingCost + order.transportCost).toLocaleString()}</td>
                   <td>
-                    <span className={`badge ${order.status === 'CONFIRMED' ? 'badge-success' : (order.status === 'CANCELLED' ? 'badge-danger' : 'badge-warning')}`}>
+                    <span className={`badge ${order.status === 'CONFIRMED' ? 'badge-success' : (order.status === 'CANCELLED' ? 'badge-danger' : (order.status === 'CHANGED' ? 'badge-info' : 'badge-warning'))}`}>
                       {order.status}
                     </span>
                   </td>
                   <td>
-                    <div style={{ display: 'flex', gap: '0.5rem' }}>
+                    <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
                       {order.status === 'PENDING' && (
                         <>
-                          <button className="btn btn-outline" style={{ fontSize: '0.75rem', padding: '0.25rem 0.5rem' }} onClick={() => updateStatus(order.id, 'CONFIRMED')}>Confirm</button>
-                          <button className="btn btn-outline" style={{ fontSize: '0.75rem', padding: '0.25rem 0.5rem', color: 'var(--color-danger)', borderColor: 'var(--color-danger)' }} onClick={() => updateStatus(order.id, 'CANCELLED')}>Cancel</button>
+                          <button className="btn btn-primary" style={{ fontSize: '0.75rem', padding: '0.25rem 0.5rem' }} onClick={() => updateStatus(order.id, 'CONFIRMED')}>Confirm Order</button>
+                          <button className="btn btn-outline" style={{ fontSize: '0.75rem', padding: '0.25rem 0.5rem' }} onClick={() => { setSelectedOrder(order); setIsChangeOrderModalOpen(true); }}>Change Order</button>
+                          <button className="btn btn-outline" style={{ fontSize: '0.75rem', padding: '0.25rem 0.5rem', color: 'var(--color-danger)', borderColor: 'var(--color-danger)' }} onClick={() => updateStatus(order.id, 'CANCELLED')}>Cancel Order</button>
                         </>
                       )}
-                      {order.status !== 'PENDING' && (
+                      {(order.status === 'CANCELLED' || order.status === 'CHANGED') && (
+                         <button className="btn btn-outline" style={{ fontSize: '0.75rem', padding: '0.25rem 0.5rem' }} onClick={() => { setSelectedOrder(order); setIsLogRefundModalOpen(true); }}>{order.status === 'CANCELLED' ? 'Refund Log' : 'Record Cash Equivalent Returned'}</button>
+                      )}
+                      {order.status === 'CHANGED' && (
+                        <button className="btn btn-outline" style={{ fontSize: '0.75rem', padding: '0.25rem 0.5rem' }}>View Swap</button>
+                      )}
+                      {order.status === 'CONFIRMED' && (
                          <button className="btn btn-outline" style={{ fontSize: '0.75rem', padding: '0.25rem 0.5rem' }}>View Details</button>
                       )}
                     </div>
@@ -84,7 +98,7 @@ export default function OrderManagement() {
               ))}
               {orders.length === 0 && (
                 <tr>
-                    <td colSpan={6} style={{ textAlign: 'center' }}>No orders found</td>
+                    <td colSpan={7} style={{ textAlign: 'center' }}>No orders found</td>
                 </tr>
               )}
             </tbody>
@@ -105,6 +119,14 @@ export default function OrderManagement() {
 
       <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title="Create New Order">
         <CreateOrderForm onSuccess={() => { setIsModalOpen(false); loadData(); }} onCancel={() => setIsModalOpen(false)} />
+      </Modal>
+
+      <Modal isOpen={isChangeOrderModalOpen} onClose={() => setIsChangeOrderModalOpen(false)} title="Change Order (Switch Fuel)">
+        <ChangeOrderForm order={selectedOrder} onSuccess={() => { setIsChangeOrderModalOpen(false); loadData(); }} onCancel={() => setIsChangeOrderModalOpen(false)} />
+      </Modal>
+
+      <Modal isOpen={isLogRefundModalOpen} onClose={() => setIsLogRefundModalOpen(false)} title="Record Cash Equivalent Returned">
+        <LogRefundForm order={selectedOrder} onSuccess={() => { setIsLogRefundModalOpen(false); loadData(); }} onCancel={() => setIsLogRefundModalOpen(false)} />
       </Modal>
     </>
   );
