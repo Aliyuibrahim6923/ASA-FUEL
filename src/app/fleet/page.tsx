@@ -5,11 +5,18 @@ import Modal from "@/components/Modal";
 import AddTransporterForm from "@/components/forms/AddTransporterForm";
 import InitiateTransportForm from "@/components/forms/InitiateTransportForm";
 import ManageDeductionsForm from "@/components/forms/ManageDeductionsForm";
+import CompleteTransportForm from "@/components/forms/CompleteTransportForm";
+import LogDepositForm from "@/components/forms/LogDepositForm";
+import LogDeductionForm from "@/components/forms/LogDeductionForm";
 
 export default function FleetManagement() {
   const [isTransporterModalOpen, setIsTransporterModalOpen] = useState(false);
   const [isTransportModalOpen, setIsTransportModalOpen] = useState(false);
   const [isDeductionModalOpen, setIsDeductionModalOpen] = useState(false);
+  const [isCompleteTransportModalOpen, setIsCompleteTransportModalOpen] = useState(false);
+  const [isLogDepositModalOpen, setIsLogDepositModalOpen] = useState(false);
+  const [isLogDeductionModalOpen, setIsLogDeductionModalOpen] = useState(false);
+  const [selectedTransport, setSelectedTransport] = useState<any>(null);
   
   const [transporters, setTransporters] = useState<any[]>([]);
   const [transports, setTransports] = useState<any[]>([]);
@@ -84,17 +91,30 @@ export default function FleetManagement() {
             <table>
               <thead>
                 <tr>
-                  <th>Truck</th>
+                  <th>Transporter Name</th>
                   <th>Base Rate</th>
-                  <th>Net Paid</th>
+                  <th>Deposits Made</th>
+                  <th>Expenses/Deductions</th>
+                  <th>Net Transport Fee Paid</th>
+                  <th>Action</th>
                 </tr>
               </thead>
               <tbody>
                 {transports.map(t => (
                   <tr key={t.id}>
-                    <td>{t.truck?.truckNameId}</td>
+                    <td>{t.transporter?.name || t.truck?.truckNameId}</td>
                     <td>₦{(t.ratePerLiter * t.litersCarried).toLocaleString()}</td>
-                    <td>₦{t.netTransportFeePaid || 0}</td>
+                    <td><span style={{ color: 'var(--color-primary)' }}>₦{t.depositsMade ? t.depositsMade.toLocaleString() : 0}</span></td>
+                    <td><span style={{ color: 'var(--color-danger)' }}>₦{t.totalDeduction ? t.totalDeduction.toLocaleString() : 0}</span></td>
+                    <td><strong>₦{t.netTransportFeePaid ? t.netTransportFeePaid.toLocaleString() : ((t.ratePerLiter * t.litersCarried) - (t.totalDeduction || 0)).toLocaleString()}</strong></td>
+                    <td>
+                      <div style={{ display: 'flex', gap: '0.5rem' }}>
+                        {t.status !== 'COMPLETED' && (
+                          <button className="btn btn-primary" style={{ padding: '0.25rem 0.5rem', fontSize: '0.75rem' }} onClick={() => { setSelectedTransport(t); setIsCompleteTransportModalOpen(true); }}>Complete</button>
+                        )}
+                        <button className="btn btn-outline" style={{ padding: '0.25rem 0.5rem', fontSize: '0.75rem' }} onClick={() => { setSelectedTransport(t); setIsLogDepositModalOpen(true); }}>Log Deposit</button>
+                      </div>
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -104,26 +124,39 @@ export default function FleetManagement() {
 
         <div className="card">
           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1.5rem' }}>
-            <h2 style={{ fontSize: '1.25rem' }}>Maintenance (Tab B)</h2>
-            <button className="btn btn-outline" style={{ padding: '0.25rem 0.5rem', fontSize: '0.75rem' }} onClick={() => setIsDeductionModalOpen(true)}>Manage</button>
+            <h2 style={{ fontSize: '1.25rem' }}>Maintenance & Deductions (Tab B)</h2>
+            <button className="btn btn-outline" style={{ padding: '0.25rem 0.5rem', fontSize: '0.75rem' }} onClick={() => setIsDeductionModalOpen(true)}>Manage General Maintenance</button>
           </div>
           <div className="table-wrapper">
             <table>
               <thead>
                 <tr>
                   <th>Truck ID</th>
-                  <th>Cost</th>
-                  <th>Desc</th>
+                  <th>Maintenance Cost</th>
+                  <th>Liters Lost</th>
+                  <th>Cash Deduction</th>
+                  <th>Petroleum Eq.</th>
+                  <th>Total Deduction</th>
+                  <th>Action</th>
                 </tr>
               </thead>
               <tbody>
-                {maintenance.map(m => (
-                  <tr key={m.id}>
-                    <td>{m.truck?.truckNameId}</td>
-                    <td><span style={{ color: 'var(--color-danger)' }}>₦{m.cost.toLocaleString()}</span></td>
-                    <td>{m.description}</td>
-                  </tr>
-                ))}
+                {transports.map(t => {
+                  const cashDeduction = (t.litersLost || 0) * t.ratePerLiter;
+                  return (
+                    <tr key={`deduction-${t.id}`}>
+                      <td>{t.truck?.truckNameId}</td>
+                      <td>₦{t.maintenanceCost ? t.maintenanceCost.toLocaleString() : 0}</td>
+                      <td>{t.litersLost || 0}L</td>
+                      <td><span style={{ color: 'var(--color-danger)' }}>₦{cashDeduction.toLocaleString()}</span></td>
+                      <td>{t.volumeEquivalent ? t.volumeEquivalent.toLocaleString() : 0}L</td>
+                      <td><strong>₦{t.totalDeduction ? t.totalDeduction.toLocaleString() : 0}</strong></td>
+                      <td>
+                        <button className="btn btn-outline" style={{ padding: '0.25rem 0.5rem', fontSize: '0.75rem' }} onClick={() => { setSelectedTransport(t); setIsLogDeductionModalOpen(true); }}>Log Deduction</button>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
@@ -138,8 +171,20 @@ export default function FleetManagement() {
         <InitiateTransportForm onSuccess={() => { setIsTransportModalOpen(false); loadData(); }} onCancel={() => setIsTransportModalOpen(false)} />
       </Modal>
 
-      <Modal isOpen={isDeductionModalOpen} onClose={() => setIsDeductionModalOpen(false)} title="Log Maintenance Deduction">
+      <Modal isOpen={isCompleteTransportModalOpen} onClose={() => setIsCompleteTransportModalOpen(false)} title="Complete Transport">
+        <CompleteTransportForm transport={selectedTransport} onSuccess={() => { setIsCompleteTransportModalOpen(false); loadData(); }} onCancel={() => setIsCompleteTransportModalOpen(false)} />
+      </Modal>
+
+      <Modal isOpen={isDeductionModalOpen} onClose={() => setIsDeductionModalOpen(false)} title="Log General Maintenance">
         <ManageDeductionsForm onSuccess={() => { setIsDeductionModalOpen(false); loadData(); }} onCancel={() => setIsDeductionModalOpen(false)} />
+      </Modal>
+
+      <Modal isOpen={isLogDepositModalOpen} onClose={() => setIsLogDepositModalOpen(false)} title="Log Transport Deposit">
+        <LogDepositForm transport={selectedTransport} onSuccess={() => { setIsLogDepositModalOpen(false); loadData(); }} onCancel={() => setIsLogDepositModalOpen(false)} />
+      </Modal>
+
+      <Modal isOpen={isLogDeductionModalOpen} onClose={() => setIsLogDeductionModalOpen(false)} title="Log Trip Deduction">
+        <LogDeductionForm transport={selectedTransport} onSuccess={() => { setIsLogDeductionModalOpen(false); loadData(); }} onCancel={() => setIsLogDeductionModalOpen(false)} />
       </Modal>
     </>
   );
