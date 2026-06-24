@@ -139,7 +139,7 @@ export default function OrderManagement() {
       </Modal>
 
       <Modal isOpen={isLogRefundModalOpen} onClose={() => setIsLogRefundModalOpen(false)} title="Record Cash Equivalent Returned">
-        <LogRefundForm order={selectedOrder} onSuccess={() => { setIsLogRefundModalOpen(false); loadData(); }} onCancel={() => setIsLogRefundModalOpen(false)} />
+        <LogRefundForm order={selectedOrder} onSuccess={() => { setIsLogRefundModalOpen(false); loadOrders(); }} onCancel={() => setIsLogRefundModalOpen(false)} />
       </Modal>
     </>
   );
