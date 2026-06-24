@@ -34,7 +34,18 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
     payload.litersLost = currentLitersLost;
   }
 
-  const baseRate = (existing.ratePerLiter * existing.litersCarried);
+  let baseRate = (existing.ratePerLiter * existing.litersCarried);
+  
+  // Add extra earnings from subsequent locations
+  const finalSubsequentLocs = payload.subsequentLocs || existing.subsequentLocs || [];
+  if (Array.isArray(finalSubsequentLocs)) {
+    finalSubsequentLocs.forEach((loc: any) => {
+      const dropRate = loc.rate || 0;
+      const dropLiters = loc.litersDelivered || 0;
+      baseRate += (dropRate * dropLiters);
+    });
+  }
+
   const deductionFromLitersLost = currentLitersLost * existing.ratePerLiter;
   const totalDeduction = deductionFromLitersLost + currentMaintenance;
   

@@ -6,10 +6,10 @@ export default function CompleteTransportForm({ transport, onSuccess, onCancel }
   const [error, setError] = useState<string | null>(null);
   
   const [litersDelivered, setLitersDelivered] = useState(transport?.litersCarried || "");
-  const [subsequentLocs, setSubsequentLocs] = useState<{location: string, rate: string}[]>([]);
+  const [subsequentLocs, setSubsequentLocs] = useState<{location: string, rate: string, litersDelivered: string}[]>([]);
 
   const handleAddLocation = () => {
-    setSubsequentLocs([...subsequentLocs, { location: "", rate: "" }]);
+    setSubsequentLocs([...subsequentLocs, { location: "", rate: "", litersDelivered: "" }]);
   };
 
   const handleRemoveLocation = (index: number) => {
@@ -28,8 +28,8 @@ export default function CompleteTransportForm({ transport, onSuccess, onCancel }
     setError(null);
 
     // Filter out empty locations
-    const validLocs = subsequentLocs.filter(loc => loc.location.trim() !== "" && loc.rate !== "");
-    const formattedLocs = validLocs.map(loc => ({ location: loc.location, rate: parseFloat(loc.rate) }));
+    const validLocs = subsequentLocs.filter(loc => loc.location.trim() !== "" && loc.rate !== "" && loc.litersDelivered !== "");
+    const formattedLocs = validLocs.map(loc => ({ location: loc.location, rate: parseFloat(loc.rate), litersDelivered: parseFloat(loc.litersDelivered) }));
 
     try {
       const response = await fetch(`/api/transports/${transport.id}`, {
@@ -74,12 +74,15 @@ export default function CompleteTransportForm({ transport, onSuccess, onCancel }
         </div>
         
         {subsequentLocs.map((loc, index) => (
-          <div key={index} style={{ display: 'flex', gap: '1rem', alignItems: 'center', marginBottom: '0.75rem', backgroundColor: '#f3f4f6', padding: '0.75rem', borderRadius: '0.5rem' }}>
+          <div key={index} style={{ display: 'flex', gap: '0.75rem', alignItems: 'center', marginBottom: '0.75rem', backgroundColor: '#f3f4f6', padding: '0.75rem', borderRadius: '0.5rem' }}>
             <div style={{ flex: 2 }}>
                 <input type="text" className="input" placeholder="Location Name" value={loc.location} onChange={e => updateLocation(index, 'location', e.target.value)} required />
             </div>
             <div style={{ flex: 1 }}>
                 <input type="number" className="input" placeholder="Fee/Liter" value={loc.rate} onChange={e => updateLocation(index, 'rate', e.target.value)} required />
+            </div>
+            <div style={{ flex: 1 }}>
+                <input type="number" className="input" placeholder="Liters Delivered" value={loc.litersDelivered} onChange={e => updateLocation(index, 'litersDelivered', e.target.value)} required />
             </div>
             <button type="button" onClick={() => handleRemoveLocation(index)} style={{ color: 'var(--color-danger)', border: 'none', background: 'none', cursor: 'pointer', padding: '0.5rem', fontWeight: 'bold' }}>X</button>
           </div>
