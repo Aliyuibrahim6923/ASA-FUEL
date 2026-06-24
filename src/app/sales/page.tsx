@@ -107,7 +107,7 @@ export default function SalesManagement() {
                          <button className="btn btn-primary" style={{ padding: '0.35rem 0.75rem', fontSize: '0.75rem', borderRadius: '0.375rem', boxShadow: '0 2px 4px rgba(59, 130, 246, 0.15)', background: 'linear-gradient(135deg, var(--color-info), #2563EB)', color: 'white', border: 'none' }} onClick={() => { setSelectedSale(sale); setIsLogLitersModalOpen(true); }}>Log Delivery</button>
                        )}
                        <div style={{ display: 'flex', gap: '0.5rem' }}>
-                         <button className="btn btn-outline" style={{ padding: '0.35rem 0.75rem', fontSize: '0.75rem', borderRadius: '0.375rem', border: '1px solid #e5e7eb', backgroundColor: 'white', color: '#374151' }} onClick={() => { setSelectedSale(sale); setIsViewModalOpen(true); }}>View</button>
+                         <button className="btn btn-outline" style={{ padding: '0.35rem 0.75rem', fontSize: '0.75rem', borderRadius: '0.375rem', border: '1px solid #e5e7eb', backgroundColor: 'white', color: '#374151' }} onClick={() => { setSelectedSale(sale); setIsViewModalOpen(true); }}>View Details</button>
                          <button className="btn btn-outline" style={{ padding: '0.35rem 0.75rem', fontSize: '0.75rem', borderRadius: '0.375rem', border: '1px solid #e5e7eb', backgroundColor: 'white', color: '#374151' }} onClick={() => { setSelectedSale(sale); setIsEditModalOpen(true); }}>Edit</button>
                        </div>
                      </div>

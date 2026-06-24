@@ -64,6 +64,7 @@ export default function FleetManagement() {
                 <th>Capacity</th>
                 <th>Driver Name</th>
                 <th>Status</th>
+                <th style={{ textAlign: 'right' }}>Action</th>
               </tr>
             </thead>
             <tbody>
@@ -75,12 +76,15 @@ export default function FleetManagement() {
                     <td>{truck.capacityLiters ? `${truck.capacityLiters}L` : '-'}</td>
                     <td>{truck.driverName || '-'}</td>
                     <td><span className="badge badge-success">Active</span></td>
+                    <td style={{ textAlign: 'right' }}>
+                      <button className="btn btn-outline" style={{ padding: '0.35rem 0.75rem', fontSize: '0.75rem', borderRadius: '0.375rem', border: '1px solid #e5e7eb', backgroundColor: 'white', color: '#374151' }} onClick={() => { setSelectedTransport(transporter); setIsViewModalOpen(true); }}>View Details</button>
+                    </td>
                   </tr>
                 ))
               )}
               {transporters.length === 0 && (
                 <tr>
-                    <td colSpan={5} style={{ textAlign: 'center' }}>No transporters found</td>
+                    <td colSpan={6} style={{ textAlign: 'center' }}>No transporters found</td>
                 </tr>
               )}
             </tbody>
@@ -149,7 +153,7 @@ export default function FleetManagement() {
                           <button className="btn btn-outline" style={{ padding: '0.35rem 0.75rem', fontSize: '0.75rem', borderRadius: '0.375rem', border: '1px solid #e5e7eb', backgroundColor: 'white', color: '#374151' }} onClick={() => { setSelectedTransport(t); setIsLogDepositModalOpen(true); }}>Log Deposit</button>
                         </div>
                         <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
-                          <button className="btn btn-outline" style={{ padding: '0.35rem 0.75rem', fontSize: '0.75rem', borderRadius: '0.375rem', border: '1px solid #e5e7eb', backgroundColor: 'white', color: '#374151' }} onClick={() => { setSelectedTransport(t); setIsViewModalOpen(true); }}>View</button>
+                          <button className="btn btn-outline" style={{ padding: '0.35rem 0.75rem', fontSize: '0.75rem', borderRadius: '0.375rem', border: '1px solid #e5e7eb', backgroundColor: 'white', color: '#374151' }} onClick={() => { setSelectedTransport(t); setIsViewModalOpen(true); }}>View Details</button>
                           <button className="btn btn-outline" style={{ padding: '0.35rem 0.75rem', fontSize: '0.75rem', borderRadius: '0.375rem', border: '1px solid #e5e7eb', backgroundColor: 'white', color: '#374151' }} onClick={() => { setSelectedTransport(t); setIsEditModalOpen(true); }}>Edit</button>
                         </div>
                       </div>
@@ -212,7 +216,10 @@ export default function FleetManagement() {
                       <td style={{ padding: '1.25rem 1rem', color: '#4b5563' }}>{t.volumeEquivalent ? t.volumeEquivalent.toLocaleString() : 0}L</td>
                       <td style={{ padding: '1.25rem 1rem', fontWeight: 700, color: '#111827', fontSize: '1.125rem' }}>₦{t.totalDeduction ? t.totalDeduction.toLocaleString() : 0}</td>
                       <td style={{ padding: '1.25rem 2rem', textAlign: 'right' }}>
-                        <button className="btn btn-outline" style={{ padding: '0.35rem 0.75rem', fontSize: '0.75rem', borderRadius: '0.375rem', border: '1px solid #e5e7eb', backgroundColor: 'white', color: '#374151' }} onClick={() => { setSelectedTransport(t); setIsLogDeductionModalOpen(true); }}>Log Deduction</button>
+                        <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
+                          <button className="btn btn-outline" style={{ padding: '0.35rem 0.75rem', fontSize: '0.75rem', borderRadius: '0.375rem', border: '1px solid #e5e7eb', backgroundColor: 'white', color: '#374151' }} onClick={() => { setSelectedTransport(t); setIsViewModalOpen(true); }}>View Details</button>
+                          <button className="btn btn-outline" style={{ padding: '0.35rem 0.75rem', fontSize: '0.75rem', borderRadius: '0.375rem', border: '1px solid #e5e7eb', backgroundColor: 'white', color: '#374151' }} onClick={() => { setSelectedTransport(t); setIsLogDeductionModalOpen(true); }}>Log Deduction</button>
+                        </div>
                       </td>
                     </tr>
                   );
