@@ -54,7 +54,7 @@ export default function CreateOrderForm({ onSuccess, onCancel }: { onSuccess: ()
       </div>
 
       <div className="form-group">
-        <label>Base Order Cost (₦)</label>
+        <label>Base Order Cost (₦ / Liter)</label>
         <input name="orderCost" type="number" className="input" required placeholder="0.00" />
       </div>
 
@@ -64,7 +64,7 @@ export default function CreateOrderForm({ onSuccess, onCancel }: { onSuccess: ()
           <input name="loadingCost" type="number" className="input" required placeholder="0.00" />
         </div>
         <div className="form-group">
-          <label>Estimated Transport Cost (₦)</label>
+          <label>Estimated Transport Cost (₦ / Liter)</label>
           <input name="transportCost" type="number" className="input" required placeholder="0.00" />
         </div>
       </div>

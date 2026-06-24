@@ -72,7 +72,7 @@ export default function OrderManagement() {
                   <td>{order.petroleumType}</td>
                   <td>{order.litersOrdered.toLocaleString()}L</td>
                   <td>{order.sourceDepot}</td>
-                  <td>₦{((order.orderCost + order.loadingCost + order.transportCost) * order.litersOrdered).toLocaleString()}</td>
+                  <td>₦{(((order.orderCost + order.transportCost) * order.litersOrdered) + order.loadingCost).toLocaleString()}</td>
                   <td>
                     <span className={`badge ${order.status === 'CONFIRMED' ? 'badge-success' : (order.status === 'CANCELLED' ? 'badge-danger' : (order.status === 'CHANGED' ? 'badge-info' : 'badge-warning'))}`}>
                       {order.status}

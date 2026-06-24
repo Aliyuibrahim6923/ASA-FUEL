@@ -57,7 +57,7 @@ export default function EditOrderForm({ order, onSuccess, onCancel }: { order: a
 
       <div className="form-row">
         <div className="form-group">
-          <label>Order Cost (₦)</label>
+          <label>Order Cost (₦ / Liter)</label>
           <input name="orderCost" type="number" className="input" defaultValue={order.orderCost} required />
         </div>
         <div className="form-group">
@@ -65,7 +65,7 @@ export default function EditOrderForm({ order, onSuccess, onCancel }: { order: a
           <input name="loadingCost" type="number" className="input" defaultValue={order.loadingCost} required />
         </div>
         <div className="form-group">
-          <label>Transport Cost (₦)</label>
+          <label>Transport Cost (₦ / Liter)</label>
           <input name="transportCost" type="number" className="input" defaultValue={order.transportCost} required />
         </div>
       </div>
