@@ -22,7 +22,8 @@ export default function CreateOrderForm({ onSuccess, onCancel }: { onSuccess: ()
       });
 
       if (!response.ok) {
-        throw new Error("Failed to create order");
+        const errData = await response.json().catch(() => null);
+        throw new Error(errData?.error || "Failed to create order");
       }
 
       onSuccess();

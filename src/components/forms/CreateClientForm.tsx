@@ -21,7 +21,10 @@ export default function CreateClientForm({ onSuccess, onCancel }: { onSuccess: (
         body: JSON.stringify(data),
       });
 
-      if (!response.ok) throw new Error("Failed to create client");
+      if (!response.ok) {
+        const errData = await response.json().catch(() => null);
+        throw new Error(errData?.error || "Failed to create client");
+      }
       onSuccess();
     } catch (err: any) {
       setError(err.message || "An error occurred");
