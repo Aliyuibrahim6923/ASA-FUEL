@@ -9,7 +9,8 @@ export default function Sidebar({ isOpen, onClose }: { isOpen?: boolean, onClose
     { name: "Dashboard", href: "/" },
     { name: "Fleet Management", href: "/fleet" },
     { name: "Order Management", href: "/orders" },
-    { name: "Sales & Clients", href: "/sales" },
+    { name: "Client Management", href: "/clients" },
+    { name: "Sales Management", href: "/sales" },
     { name: "Financials", href: "/financials" },
   ];
 
