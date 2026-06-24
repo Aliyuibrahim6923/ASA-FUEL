@@ -9,7 +9,7 @@ export default async function ClientDetailPage({ params }: { params: Promise<{ i
   const supabase = await createClient();
   const { data: client, error } = await supabase
     .from("Client")
-    .select("*, Order(*), Sale(*), Transaction(*)")
+    .select("*, Sale(*), Transaction(*)")
     .eq("id", id)
     .single();
 
