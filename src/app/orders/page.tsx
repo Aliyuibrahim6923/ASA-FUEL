@@ -97,9 +97,6 @@ export default function OrderManagement() {
                       {order.status === 'CHANGED' && (
                         <button className="btn btn-outline" style={{ fontSize: '0.75rem', padding: '0.25rem 0.5rem' }}>View Swap</button>
                       )}
-                      {order.status === 'CONFIRMED' && (
-                         <button className="btn btn-outline" style={{ fontSize: '0.75rem', padding: '0.25rem 0.5rem' }}>View Details</button>
-                      )}
                     </div>
                   </td>
                 </tr>
