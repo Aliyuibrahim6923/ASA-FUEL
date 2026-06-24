@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function RecordExpenseForm({ onSuccess, onCancel }: { onSuccess: () => void, onCancel: () => void }) {
   const [loading, setLoading] = useState(false);
