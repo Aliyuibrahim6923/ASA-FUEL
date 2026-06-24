@@ -160,7 +160,12 @@ export default function SalesManagement() {
                     <p style={{ fontSize: '0.75rem', color: '#6b7280', margin: 0, marginTop: '0.25rem' }}>#{sale.id.slice(0, 8)}</p>
                   </td>
                   <td style={{ padding: '1.25rem 1rem', color: '#4b5563' }}>
-                    <span style={{ display: 'inline-block', padding: '0.25rem 0.5rem', backgroundColor: '#f3f4f6', borderRadius: '0.25rem', fontSize: '0.75rem', fontFamily: 'monospace' }}>{sale.truck?.truckNameId || 'N/A'}</span>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+                      <span style={{ display: 'inline-block', padding: '0.25rem 0.5rem', backgroundColor: '#f3f4f6', borderRadius: '0.25rem', fontSize: '0.75rem', fontFamily: 'monospace', width: 'fit-content' }}>{sale.truck?.truckNameId || 'N/A'}</span>
+                      {sale.transportId && (
+                        <span style={{ fontSize: '0.7rem', color: '#6b7280' }}>Trip #{sale.transportId.slice(0, 6)}</span>
+                      )}
+                    </div>
                   </td>
                   <td style={{ padding: '1.25rem 1rem', color: '#4b5563' }}>{sale.litersDespatched.toLocaleString()}L</td>
                   <td style={{ padding: '1.25rem 1rem' }}>

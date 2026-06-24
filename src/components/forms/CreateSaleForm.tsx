@@ -7,14 +7,13 @@ export default function CreateSaleForm({ onSuccess, onCancel }: { onSuccess: () 
   const [error, setError] = useState<string | null>(null);
   
   const [clients, setClients] = useState<any[]>([]);
-  const [trucks, setTrucks] = useState<any[]>([]);
+  const [transports, setTransports] = useState<any[]>([]);
 
   useEffect(() => {
     fetch('/api/clients').then(res => res.json()).then(setClients).catch(e => console.error(e));
-    fetch('/api/transporters').then(res => res.json()).then(transporters => {
-        if(Array.isArray(transporters)) {
-          const allTrucks = transporters.flatMap((t: any) => t.trucks || []);
-          setTrucks(allTrucks);
+    fetch('/api/transports').then(res => res.json()).then(data => {
+        if(Array.isArray(data)) {
+           setTransports(data);
         }
     }).catch(e => console.error(e));
   }, []);
@@ -26,6 +25,12 @@ export default function CreateSaleForm({ onSuccess, onCancel }: { onSuccess: () 
 
     const formData = new FormData(e.currentTarget);
     const data = Object.fromEntries(formData.entries());
+
+    // We need to inject the truckId since it's required by the schema, looking it up from the transport
+    const selectedTransport = transports.find(t => t.id === data.transportId);
+    if (selectedTransport) {
+      data.truckId = selectedTransport.truckId;
+    }
 
     try {
       const response = await fetch('/api/sales', {
@@ -56,10 +61,12 @@ export default function CreateSaleForm({ onSuccess, onCancel }: { onSuccess: () 
       </div>
 
       <div className="form-group">
-        <label>Delivering Truck</label>
-        <select name="truckId" className="input" required style={{ backgroundColor: 'white' }}>
-          <option value="">Select Truck</option>
-          {trucks.map(t => <option key={t.id} value={t.id}>{t.truckNameId}</option>)}
+        <label>Delivering Transport / Trip</label>
+        <select name="transportId" className="input" required style={{ backgroundColor: 'white' }}>
+          <option value="">Select Transport Trip</option>
+          {transports.map(t => <option key={t.id} value={t.id}>
+             Trip #{t.id.slice(0,6)} - {t.truck?.truckNameId} to {t.destination}
+          </option>)}
         </select>
       </div>
 

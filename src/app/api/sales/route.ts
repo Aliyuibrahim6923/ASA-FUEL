@@ -5,7 +5,7 @@ export async function GET() {
   const supabase = await createClient();
   const { data: sales, error } = await supabase
     .from('Sale')
-    .select('*, client:Client(*), truck:Truck(*), transactions:Transaction(*)');
+    .select('*, client:Client(*), truck:Truck(*), transport:Transport(*), transactions:Transaction(*)');
 
   if (error) return NextResponse.json({ error: "Failed to fetch sales" }, { status: 500 });
   return NextResponse.json(sales || []);
@@ -20,6 +20,7 @@ export async function POST(request: Request) {
     .insert([{
       clientId: data.clientId,
       truckId: data.truckId,
+      transportId: data.transportId,
       litersDespatched: parseFloat(data.litersDespatched),
       litersReceived: parseFloat(data.litersReceived),
       amountPerLiter: parseFloat(data.amountPerLiter),
