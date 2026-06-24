@@ -84,79 +84,134 @@ export default function FleetManagement() {
         </div>
       </div>
       
-      <div className="grid-cards" style={{ marginTop: '2rem' }}>
-        <div className="card">
-          <h2 style={{ marginBottom: '1.5rem', fontSize: '1.25rem' }}>Transport Earnings (Tab A)</h2>
-          <div className="table-wrapper">
-            <table>
-              <thead>
+      <div className="grid-cards" style={{ marginTop: '2rem', display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+        <div className="card" style={{ background: 'linear-gradient(to bottom right, #ffffff, #fafafa)', border: '1px solid #eaeaea', boxShadow: '0 10px 30px -10px rgba(0,0,0,0.05)', borderRadius: '1.25rem', overflow: 'hidden', padding: 0 }}>
+          <div style={{ padding: '1.5rem 2rem', borderBottom: '1px solid var(--color-divider)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'rgba(255,255,255,0.8)' }}>
+            <div>
+              <h2 style={{ fontSize: '1.25rem', margin: 0, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <span style={{ display: 'inline-block', width: 12, height: 12, borderRadius: '50%', backgroundColor: 'var(--color-primary)' }}></span>
+                Transport Earnings (Tab A)
+              </h2>
+              <p style={{ fontSize: '0.875rem', color: 'var(--color-text-secondary)', margin: 0, marginTop: '0.25rem' }}>Financial ledger for all external and internal trips.</p>
+            </div>
+            <div style={{ display: 'flex', gap: '1.5rem', textAlign: 'right' }}>
+              <div>
+                <p style={{ fontSize: '0.75rem', textTransform: 'uppercase', color: 'var(--color-text-tertiary)', fontWeight: 600, letterSpacing: '0.05em' }}>Total Net Paid</p>
+                <p style={{ fontSize: '1.5rem', fontWeight: 700, color: 'var(--color-text-primary)' }}>₦{transports.reduce((sum, t) => sum + (t.netTransportFeePaid || ((t.ratePerLiter * t.litersCarried) - (t.totalDeduction || 0))), 0).toLocaleString()}</p>
+              </div>
+            </div>
+          </div>
+          <div className="table-wrapper" style={{ border: 'none', borderRadius: 0 }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+              <thead style={{ backgroundColor: '#f9fafb' }}>
                 <tr>
-                  <th>Transporter Name</th>
-                  <th>Base Rate</th>
-                  <th>Deposits Made</th>
-                  <th>Expenses/Deductions</th>
-                  <th>Net Transport Fee Paid</th>
-                  <th>Action</th>
+                  <th style={{ padding: '1rem 2rem', color: '#6b7280', fontSize: '0.75rem', borderBottom: '1px solid #e5e7eb' }}>Transporter Name</th>
+                  <th style={{ padding: '1rem', color: '#6b7280', fontSize: '0.75rem', borderBottom: '1px solid #e5e7eb' }}>Base Rate</th>
+                  <th style={{ padding: '1rem', color: '#6b7280', fontSize: '0.75rem', borderBottom: '1px solid #e5e7eb' }}>Deposits Made</th>
+                  <th style={{ padding: '1rem', color: '#6b7280', fontSize: '0.75rem', borderBottom: '1px solid #e5e7eb' }}>Deductions</th>
+                  <th style={{ padding: '1rem', color: '#6b7280', fontSize: '0.75rem', borderBottom: '1px solid #e5e7eb' }}>Net Paid</th>
+                  <th style={{ padding: '1rem 2rem', color: '#6b7280', fontSize: '0.75rem', textAlign: 'right', borderBottom: '1px solid #e5e7eb' }}>Action</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody style={{ backgroundColor: 'white' }}>
                 {transports.map(t => (
-                  <tr key={t.id}>
-                    <td>{t.transporter?.name || t.truck?.truckNameId}</td>
-                    <td>₦{(t.ratePerLiter * t.litersCarried).toLocaleString()}</td>
-                    <td><span style={{ color: 'var(--color-primary)' }}>₦{t.depositsMade ? t.depositsMade.toLocaleString() : 0}</span></td>
-                    <td><span style={{ color: 'var(--color-danger)' }}>₦{t.totalDeduction ? t.totalDeduction.toLocaleString() : 0}</span></td>
-                    <td><strong>₦{t.netTransportFeePaid ? t.netTransportFeePaid.toLocaleString() : ((t.ratePerLiter * t.litersCarried) - (t.totalDeduction || 0)).toLocaleString()}</strong></td>
-                    <td>
-                      <div style={{ display: 'flex', gap: '0.5rem' }}>
+                  <tr key={t.id} style={{ transition: 'background-color 0.2s', borderBottom: '1px solid #f3f4f6' }}>
+                    <td style={{ padding: '1.25rem 2rem', fontWeight: 500, color: '#111827' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                        <div style={{ width: 32, height: 32, borderRadius: '50%', backgroundColor: '#f3f4f6', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.75rem', fontWeight: 600, color: '#6b7280' }}>
+                          TR
+                        </div>
+                        {t.transporter?.name || t.truck?.truckNameId}
+                      </div>
+                    </td>
+                    <td style={{ padding: '1.25rem 1rem', color: '#4b5563' }}>₦{(t.ratePerLiter * t.litersCarried).toLocaleString()}</td>
+                    <td style={{ padding: '1.25rem 1rem' }}>
+                      <span style={{ display: 'inline-flex', padding: '0.25rem 0.75rem', backgroundColor: '#e0e7ff', color: '#4338ca', borderRadius: '9999px', fontSize: '0.75rem', fontWeight: 600 }}>
+                        ₦{t.depositsMade ? t.depositsMade.toLocaleString() : 0}
+                      </span>
+                    </td>
+                    <td style={{ padding: '1.25rem 1rem' }}>
+                      <span style={{ display: 'inline-flex', padding: '0.25rem 0.75rem', backgroundColor: '#fee2e2', color: '#991b1b', borderRadius: '9999px', fontSize: '0.75rem', fontWeight: 600 }}>
+                        -₦{t.totalDeduction ? t.totalDeduction.toLocaleString() : 0}
+                      </span>
+                    </td>
+                    <td style={{ padding: '1.25rem 1rem', fontWeight: 700, color: '#111827', fontSize: '1.125rem' }}>₦{t.netTransportFeePaid ? t.netTransportFeePaid.toLocaleString() : ((t.ratePerLiter * t.litersCarried) - (t.totalDeduction || 0)).toLocaleString()}</td>
+                    <td style={{ padding: '1.25rem 2rem', textAlign: 'right' }}>
+                      <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
                         {t.status !== 'COMPLETED' && (
-                          <button className="btn btn-primary" style={{ padding: '0.25rem 0.5rem', fontSize: '0.75rem' }} onClick={() => { setSelectedTransport(t); setIsCompleteTransportModalOpen(true); }}>Complete</button>
+                          <button className="btn btn-primary" style={{ padding: '0.35rem 0.75rem', fontSize: '0.75rem', borderRadius: '0.375rem', boxShadow: '0 2px 4px rgba(255, 106, 0, 0.15)' }} onClick={() => { setSelectedTransport(t); setIsCompleteTransportModalOpen(true); }}>Complete</button>
                         )}
-                        <button className="btn btn-outline" style={{ padding: '0.25rem 0.5rem', fontSize: '0.75rem' }} onClick={() => { setSelectedTransport(t); setIsLogDepositModalOpen(true); }}>Log Deposit</button>
+                        <button className="btn btn-outline" style={{ padding: '0.35rem 0.75rem', fontSize: '0.75rem', borderRadius: '0.375rem', border: '1px solid #e5e7eb', backgroundColor: 'white', color: '#374151' }} onClick={() => { setSelectedTransport(t); setIsLogDepositModalOpen(true); }}>Log Deposit</button>
                       </div>
                     </td>
                   </tr>
                 ))}
+                {transports.length === 0 && (
+                  <tr>
+                    <td colSpan={6} style={{ padding: '3rem', textAlign: 'center', color: '#9ca3af' }}>No transport earnings logged yet.</td>
+                  </tr>
+                )}
               </tbody>
             </table>
           </div>
         </div>
 
-        <div className="card">
-          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1.5rem' }}>
-            <h2 style={{ fontSize: '1.25rem' }}>Maintenance & Deductions (Tab B)</h2>
-            <button className="btn btn-outline" style={{ padding: '0.25rem 0.5rem', fontSize: '0.75rem' }} onClick={() => setIsDeductionModalOpen(true)}>Manage General Maintenance</button>
+        <div className="card" style={{ background: 'linear-gradient(to bottom right, #ffffff, #fafafa)', border: '1px solid #eaeaea', boxShadow: '0 10px 30px -10px rgba(0,0,0,0.05)', borderRadius: '1.25rem', overflow: 'hidden', padding: 0 }}>
+          <div style={{ padding: '1.5rem 2rem', borderBottom: '1px solid var(--color-divider)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'rgba(255,255,255,0.8)' }}>
+            <div>
+              <h2 style={{ fontSize: '1.25rem', margin: 0, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <span style={{ display: 'inline-block', width: 12, height: 12, borderRadius: '50%', backgroundColor: 'var(--color-danger)' }}></span>
+                Maintenance & Deductions (Tab B)
+              </h2>
+              <p style={{ fontSize: '0.875rem', color: 'var(--color-text-secondary)', margin: 0, marginTop: '0.25rem' }}>Trip incidents, lost liters, and mechanic costs.</p>
+            </div>
+            <div style={{ display: 'flex', gap: '1rem' }}>
+              <div style={{ textAlign: 'right', marginRight: '1.5rem' }}>
+                <p style={{ fontSize: '0.75rem', textTransform: 'uppercase', color: 'var(--color-text-tertiary)', fontWeight: 600, letterSpacing: '0.05em' }}>Total Deducted</p>
+                <p style={{ fontSize: '1.5rem', fontWeight: 700, color: 'var(--color-danger)' }}>₦{transports.reduce((sum, t) => sum + (t.totalDeduction || 0), 0).toLocaleString()}</p>
+              </div>
+              <button className="btn btn-outline" style={{ height: 'fit-content', alignSelf: 'center', fontSize: '0.875rem', borderRadius: '0.5rem', backgroundColor: 'white' }} onClick={() => setIsDeductionModalOpen(true)}>Manage General Logs</button>
+            </div>
           </div>
-          <div className="table-wrapper">
-            <table>
-              <thead>
+          <div className="table-wrapper" style={{ border: 'none', borderRadius: 0 }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+              <thead style={{ backgroundColor: '#f9fafb' }}>
                 <tr>
-                  <th>Truck ID</th>
-                  <th>Maintenance Cost</th>
-                  <th>Liters Lost</th>
-                  <th>Cash Deduction</th>
-                  <th>Petroleum Eq.</th>
-                  <th>Total Deduction</th>
-                  <th>Action</th>
+                  <th style={{ padding: '1rem 2rem', color: '#6b7280', fontSize: '0.75rem', borderBottom: '1px solid #e5e7eb' }}>Truck ID</th>
+                  <th style={{ padding: '1rem', color: '#6b7280', fontSize: '0.75rem', borderBottom: '1px solid #e5e7eb' }}>Maint. Cost</th>
+                  <th style={{ padding: '1rem', color: '#6b7280', fontSize: '0.75rem', borderBottom: '1px solid #e5e7eb' }}>Liters Lost</th>
+                  <th style={{ padding: '1rem', color: '#6b7280', fontSize: '0.75rem', borderBottom: '1px solid #e5e7eb' }}>Cash Deduction</th>
+                  <th style={{ padding: '1rem', color: '#6b7280', fontSize: '0.75rem', borderBottom: '1px solid #e5e7eb' }}>Petroleum Eq.</th>
+                  <th style={{ padding: '1rem', color: '#6b7280', fontSize: '0.75rem', borderBottom: '1px solid #e5e7eb' }}>Total Deduction</th>
+                  <th style={{ padding: '1rem 2rem', color: '#6b7280', fontSize: '0.75rem', textAlign: 'right', borderBottom: '1px solid #e5e7eb' }}>Action</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody style={{ backgroundColor: 'white' }}>
                 {transports.map(t => {
                   const cashDeduction = (t.litersLost || 0) * t.ratePerLiter;
                   return (
-                    <tr key={`deduction-${t.id}`}>
-                      <td>{t.truck?.truckNameId}</td>
-                      <td>₦{t.maintenanceCost ? t.maintenanceCost.toLocaleString() : 0}</td>
-                      <td>{t.litersLost || 0}L</td>
-                      <td><span style={{ color: 'var(--color-danger)' }}>₦{cashDeduction.toLocaleString()}</span></td>
-                      <td>{t.volumeEquivalent ? t.volumeEquivalent.toLocaleString() : 0}L</td>
-                      <td><strong>₦{t.totalDeduction ? t.totalDeduction.toLocaleString() : 0}</strong></td>
-                      <td>
-                        <button className="btn btn-outline" style={{ padding: '0.25rem 0.5rem', fontSize: '0.75rem' }} onClick={() => { setSelectedTransport(t); setIsLogDeductionModalOpen(true); }}>Log Deduction</button>
+                    <tr key={`deduction-${t.id}`} style={{ transition: 'background-color 0.2s', borderBottom: '1px solid #f3f4f6' }}>
+                      <td style={{ padding: '1.25rem 2rem', fontWeight: 500, color: '#111827' }}>
+                         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                            <span style={{ display: 'inline-block', padding: '0.25rem 0.5rem', backgroundColor: '#f3f4f6', borderRadius: '0.25rem', fontSize: '0.75rem', fontFamily: 'monospace' }}>{t.truck?.truckNameId || 'N/A'}</span>
+                         </div>
+                      </td>
+                      <td style={{ padding: '1.25rem 1rem', color: '#4b5563' }}>₦{t.maintenanceCost ? t.maintenanceCost.toLocaleString() : 0}</td>
+                      <td style={{ padding: '1.25rem 1rem', color: '#4b5563' }}>{t.litersLost || 0}L</td>
+                      <td style={{ padding: '1.25rem 1rem' }}><span style={{ color: '#991b1b', fontWeight: 500 }}>₦{cashDeduction.toLocaleString()}</span></td>
+                      <td style={{ padding: '1.25rem 1rem', color: '#4b5563' }}>{t.volumeEquivalent ? t.volumeEquivalent.toLocaleString() : 0}L</td>
+                      <td style={{ padding: '1.25rem 1rem', fontWeight: 700, color: '#111827', fontSize: '1.125rem' }}>₦{t.totalDeduction ? t.totalDeduction.toLocaleString() : 0}</td>
+                      <td style={{ padding: '1.25rem 2rem', textAlign: 'right' }}>
+                        <button className="btn btn-outline" style={{ padding: '0.35rem 0.75rem', fontSize: '0.75rem', borderRadius: '0.375rem', border: '1px solid #e5e7eb', backgroundColor: 'white', color: '#374151' }} onClick={() => { setSelectedTransport(t); setIsLogDeductionModalOpen(true); }}>Log Deduction</button>
                       </td>
                     </tr>
                   );
                 })}
+                {transports.length === 0 && (
+                  <tr>
+                    <td colSpan={7} style={{ padding: '3rem', textAlign: 'center', color: '#9ca3af' }}>No deductions logged yet.</td>
+                  </tr>
+                )}
               </tbody>
             </table>
           </div>
