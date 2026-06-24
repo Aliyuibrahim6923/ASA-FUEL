@@ -18,12 +18,12 @@ export async function POST(request: Request) {
   const data = await request.json();
   const { data: client, error } = await supabase
     .from('Client')
-    .insert([{ name: data.name }])
+    .insert([data])
     .select()
     .single();
 
   if (error) {
-    return NextResponse.json({ error: "Failed to create client" }, { status: 500 });
+    return NextResponse.json({ error: error.message || "Failed to create client" }, { status: 500 });
   }
   return NextResponse.json(client, { status: 201 });
 }

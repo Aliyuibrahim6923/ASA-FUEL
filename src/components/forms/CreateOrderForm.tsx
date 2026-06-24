@@ -53,6 +53,30 @@ export default function CreateOrderForm({ onSuccess, onCancel }: { onSuccess: ()
         </div>
       </div>
 
+      <div className="form-group" style={{ marginTop: '1rem', marginBottom: '0.5rem' }}>
+        <h3 style={{ fontSize: '0.875rem', fontWeight: 600, color: 'var(--color-primary)' }}>Sourcing Details</h3>
+      </div>
+
+      <div className="form-row">
+        <div className="form-group">
+          <label>Source Depot</label>
+          <input name="sourceDepot" type="text" className="input" required placeholder="e.g., Apapa Terminal" />
+        </div>
+        <div className="form-group">
+          <label>Depot Ticket / Waybill Ref</label>
+          <input name="depotTicketNumber" type="text" className="input" placeholder="Ticket number" />
+        </div>
+      </div>
+
+      <div className="form-group">
+        <label>Expected Delivery Date</label>
+        <input name="expectedDeliveryDate" type="date" className="input" required />
+      </div>
+
+      <div className="form-group" style={{ marginTop: '1rem', marginBottom: '0.5rem' }}>
+        <h3 style={{ fontSize: '0.875rem', fontWeight: 600, color: 'var(--color-primary)' }}>Cost Breakdown</h3>
+      </div>
+
       <div className="form-group">
         <label>Base Order Cost (₦ / Liter)</label>
         <input name="orderCost" type="number" className="input" required placeholder="0.00" />

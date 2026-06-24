@@ -23,11 +23,14 @@ export async function POST(request: Request) {
         orderCost: parseFloat(data.orderCost),
         loadingCost: parseFloat(data.loadingCost),
         transportCost: parseFloat(data.transportCost),
+        sourceDepot: data.sourceDepot || null,
+        depotTicketNumber: data.depotTicketNumber || null,
+        expectedDeliveryDate: data.expectedDeliveryDate ? new Date(data.expectedDeliveryDate).toISOString() : null,
         status: 'PENDING',
     }])
     .select()
     .single();
 
-  if (error) return NextResponse.json({ error: "Failed to create order" }, { status: 500 });
+  if (error) return NextResponse.json({ error: error.message || "Failed to create order" }, { status: 500 });
   return NextResponse.json(order, { status: 201 });
 }
